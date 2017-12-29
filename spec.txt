@@ -1,0 +1,15 @@
+The base product is just a python script that will read from a config.json file and control the strip based off of that appropriately, and will reload the config.json file when it is updated by another process.
+
+Base product reqs:
+* reading config.json
+* setting "zones" of different lengths/patterns on one strip
+* different animation support
+* controlling a "zone" as one single LED, or as a bunch of LEDs
+  * the entire thing will basically just be an array of zones, with their individual associated effects
+* controlling groups of zones as one zone (i.e. 3 zones each treated as an individual LED, and solid)
+* fading colors, and the math to go with that
+* when config.json is updated by another process, reload it, parse it, and restart the lights controller (or maybe just update it? idk)
+
+Additional goals:
+* some sort of web frontend (with simple TOTP auth - no password, just the 2fa) for reading & displaying the config.json
+* maybe git webhooks for the full thing
