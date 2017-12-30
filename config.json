@@ -1,0 +1,40 @@
+{
+	"count":	240,
+	"pin":		18,
+	"freq":		800000,
+	"DMA":		5,
+	"brightness":	255,
+	"invert":	false,
+	"channel":	0,
+	"strip":	"ws2812b",
+	"zones": [
+		{
+			"length":	8,
+			"zoneCombined":	true,
+			"animation":	"fade",
+			"stops":	[
+				{
+					"color":	"#5BCEFA",
+					"time":		"5s"
+				},
+				{
+					"color":	"#F5A9B8",
+					"time":		"5s"
+				},
+				{
+					"color":	"#ffffff",
+					"time":		"5s"
+				},
+				{
+					"color":	"#F5A9B8",
+					"time":		"5s"
+				}
+			]
+		},
+		{
+			"length":	8,
+			"zoneCombined":	false,
+			"animation":	"rainbowCycle"
+		}
+	]
+}
