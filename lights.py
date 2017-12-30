@@ -7,18 +7,19 @@ import time
 def watchdog(old_thread, kill):
     prev = os.stat("config.json")
     while True:
-        time.sleep(5)
+        time.sleep(1)
         curr = os.stat("config.json")
         if (prev.st_mtime != curr.st_mtime or not old_thread.is_alive()):
             print("change detected or old thread died; restarting...")
             kill.set()
             old_thread.join()
             kill.clear()
+
             lights = threading.Thread(target=lightStart, args=(kill,), daemon=True)
             lights.start()
-            old_thread = lights
 
-        prev = curr        
+            old_thread = lights
+            prev = curr        
 
 def loadconf():
     with open("config.json") as conf:
@@ -28,15 +29,17 @@ def lightStart(event):
     conf = loadconf()
     # pass conf to the controller
     # pretend busy loop below for lights controlling
-    print("\tI started! My ident is " + str(threading.get_ident()))
+    print("\tI started!")
     while True:
-        print("\t\tI'm controlling lights!  " + str(threading.get_ident()))
+        print("\t\tI'm controlling lights!")
         time.sleep(5)
         if (event.is_set()):
             sys.exit(0)
 
 def main(debug=False):
     kill = threading.Event()
+    # NOTE: due to needing the lights to be controlled in real-time, I may redo this with
+    # proper threading/multiprocessing
     lights = threading.Thread(target=lightStart, args=(kill,), daemon=True)
     lights.start()
     watchdog(lights, kill)
