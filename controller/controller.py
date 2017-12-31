@@ -6,6 +6,15 @@ import time
 
 import anim
 
+def opt_parse():
+    opts = {
+        "blank": False        
+    }
+    for arg in sys.argv:
+        if (arg == "blank" or arg == "--blank"):
+            opts["blank"] = True
+    return opts
+
 def watchdog(old_proc):
     prev = os.stat("../config.json")
     while True:
@@ -28,17 +37,35 @@ def loadconf():
     with open("../config.json") as conf:
         return json.load(conf)
 
-def lightStart():
+def lightStart(blank=False):
     conf = loadconf()
+    if (blank):
+        bzone = {
+            "name": "blank",
+            "animation": "blank",
+            "length": conf["count"]
+        }
+        conf["zones"] = [bzone]
+        conf["iters"] = 1
     # pass conf to the controller
+    # TODO: importlib here so that as long as controller.py isn't changed, the entire everything can be reloaded
     anim.run_strip(conf)
 
 def main(debug=False):
     if (sys.version_info.major < 3):
         raise Exception("must be running at least python 3")
+    opts = opt_parse()
+    if (opts["blank"]):
+        lightStart(True)
+        sys.exit(0)
     lights = multiprocessing.Process(target=lightStart, daemon=True) # yolo?
     lights.start()
-    watchdog(lights)
+    try:
+        watchdog(lights)
+    except KeyboardInterrupt as e:
+        print("\n")
+        lights.terminate()
+        sys.exit(0)
 
 if (__name__ == "__main__"):
     main(False)

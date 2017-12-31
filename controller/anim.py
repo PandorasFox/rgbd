@@ -1,7 +1,7 @@
 import importlib
 import time
 import neopixel
-import animations
+
 import zone
 
 class Blank:
@@ -14,7 +14,8 @@ class Blank:
             self.zone.setpixel(i, 0)
 
 def get_anim_class(name):
-    if (name == None):
+    # name = name.lower() # maybe I shouldn't do this?
+    if (name == None or name == "blank"):
         ans = Blank
         print("No animation name specified - continuing with Blank anim..")
     elif (name[0] != "."):
@@ -46,6 +47,7 @@ def run_strip(conf):
     )
     strip.begin()
     importlib.invalidate_caches()
+    anims_pkg = importlib.import_module("animations")
     offset = 0
     zones = []
     for z in conf.get("zones"):
@@ -55,15 +57,23 @@ def run_strip(conf):
         offset += z["length"]
         if (offset > conf.get("count")):
             print("Invalid zone info - double check count/zone sizes")
+    # TODO: if offset != count - make a filler "blank" zone
+    
+    i = 0
+
+    # TODO: have two different loops - one for just infinite looping til death, one for a set number of iters
+    # because muh efficiency
 
     while True:
         for z in zones:
             z.iter()
         strip.show()
+        # TODO: variable sleep time based on scheduling individual zone updates?
+        # :thinking:
         time.sleep(50/1000.0)
-
-
-        #rainbow(strip)
-        #rainbowCycle(strip)
-        #theaterChaseRainbow(strip)
-    
+        if (conf.get("iters") != None):
+            i += 1
+            if (i < conf.get("iters")):
+                continue
+            else:
+                return

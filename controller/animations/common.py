@@ -10,6 +10,7 @@ def confget(conf, key, default):
     else:
         return val
 
+# TODO: rewrite using python colour library
 def wheel(pos):
     """Generate rainbow colors across 0-255 positions."""
     if pos < 85:
