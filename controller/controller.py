@@ -11,7 +11,10 @@ def watchdog(old_proc):
     while True:
         time.sleep(1)
         curr = os.stat("../config.json")
-        if (prev.st_mtime != curr.st_mtime or not old_proc.is_alive()):
+        if (prev.st_mtime == curr.st_mtime and not old_proc.is_alive()):
+            print("Child process died! Exiting...")
+            sys.exit(1)
+        elif (prev.st_mtime != curr.st_mtime):
             print("change detected or old thread died; restarting...")
             old_proc.terminate()
 
