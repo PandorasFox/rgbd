@@ -3,38 +3,30 @@
 	"pin":		18,
 	"freq":		800000,
 	"DMA":		5,
-	"brightness":	255,
+	"brightness":	128,
 	"invert":	false,
 	"channel":	0,
 	"strip":	"ws2812b",
 	"zones": [
 		{
-			"length":	8,
-			"zoneCombined":	true,
-			"animation":	"fade",
-			"stops":	[
-				{
-					"color":	"#5BCEFA",
-					"time":		"5s"
-				},
-				{
-					"color":	"#F5A9B8",
-					"time":		"5s"
-				},
-				{
-					"color":	"#ffffff",
-					"time":		"5s"
-				},
-				{
-					"color":	"#F5A9B8",
-					"time":		"5s"
-				}
-			]
+			"name":		"primaryMon",
+			"length":	120,
+			"animation":	"rainbow"
 		},
 		{
-			"length":	8,
-			"zoneCombined":	false,
-			"animation":	"rainbowCycle"
+			"name":		"secondaryMon",
+			"length":	120,
+			"animation":	"advancedRainbow",
+			"animConf": {
+			  "colors": 
+			    [
+			      "#00ffff",
+			      "#ff00ff",
+			      "#ffffff",
+			      "#ff00ff"
+			    ]
+			  
+			}
 		}
 	]
 }
