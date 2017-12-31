@@ -1,21 +1,19 @@
 import animations.common as common
 
 """Draw rainbow that fades across all pixels at once."""
-
-# note: need to break this out into like
-# just init'ing itself
-# so then instead we just call <anim>.iter() at each step
-# maybe the .iter() can chain-call to .next() or something?
-
 class Anim:
-    def __init__(self, zone):
+    def __init__(self, zone, custom=None):
         self.zone = zone
-        self.j = 0
+        self.iters = 0
         self.length = zone.length
+        self.gen_wheel(self.length)
+    
+    def gen_wheel(self, num):
+        self.colors = []
+        for i in range(self.length):
+            self.colors.append(common.col_wheel(i, self.length))
 
     def iter(self):
-        for i in range(self.length):
-            self.zone.setpixel(i, common.wheel((i + self.j) & 255))
-        self.j += 1
-        if (self.j > 256):
-            self.j = 0
+        for pos in range(self.length):
+            self.zone.setpixel(pos, self.colors[(pos + self.iters) % self.length])
+        self.iters = (self.iters + 1) % self.length

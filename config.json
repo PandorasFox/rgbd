@@ -7,25 +7,19 @@
 	"invert":	false,
 	"channel":	0,
 	"strip":	"ws2812b",
+	"watch_thread":	true,
 	"zones": [
 		{
 			"name":		"primaryMon",
-			"length":	120,
+			"length":	200,
 			"animation":	"rainbow"
 		},
 		{
-			"name":		"secondaryMon",
-			"length":	120,
-			"animation":	"advancedRainbow",
-			"animConf": {
-			  "colors": 
-			    [
-			      "#00ffff",
-			      "#ff00ff",
-			      "#ffffff",
-			      "#ff00ff"
-			    ]
-			  
+			"name":		"primaryMon",
+			"length":	40,
+			"animation":	"solid",
+			"animation_config": {
+				"color": "#ff00ff"
 			}
 		}
 	]

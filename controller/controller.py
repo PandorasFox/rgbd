@@ -18,7 +18,7 @@ def opt_parse():
 def watchdog(old_proc):
     prev = os.stat("../config.json")
     while True:
-        time.sleep(1)
+        time.sleep(60)
         curr = os.stat("../config.json")
         if (prev.st_mtime == curr.st_mtime and not old_proc.is_alive()):
             print("Child process died! Exiting...")
@@ -58,14 +58,23 @@ def main(debug=False):
     if (opts["blank"]):
         lightStart(True)
         sys.exit(0)
-    lights = multiprocessing.Process(target=lightStart, daemon=True) # yolo?
-    lights.start()
-    try:
-        watchdog(lights)
-    except KeyboardInterrupt as e:
-        print("\n")
-        lights.terminate()
-        sys.exit(0)
+    conf = loadconf()
+    if (conf.get("watch_thread") == True):
+        lights = multiprocessing.Process(target=lightStart, daemon=True) # yolo?
+        lights.start()
+        try:
+            watchdog(lights)
+        except KeyboardInterrupt as e:
+            print("Exiting...")
+            lights.terminate()
+            sys.exit(0)
+
+    else:
+        try:
+            lightStart()
+        except KeyboardInterrupt as e:
+            print("Exiting...")
+            sys.exit(0)
 
 if (__name__ == "__main__"):
     main(False)

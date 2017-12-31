@@ -5,7 +5,7 @@ import neopixel
 import zone
 
 class Blank:
-    def __init__(self, zone):
+    def __init__(self, zone, conf=None):
         self.zone = zone
         self.length = zone.length
 
@@ -17,15 +17,17 @@ def get_anim_class(name):
     # name = name.lower() # maybe I shouldn't do this?
     if (name == None or name == "blank"):
         ans = Blank
-        print("No animation name specified - continuing with Blank anim..")
-    elif (name[0] != "."):
-        name = "." + name
-    try:
-        ans = importlib.import_module(name, "animations").Anim
-    except Exception as e:
-        print("Failed to import animation {}: {}".format(name, str(e)))
-        print("\tContinuing with Blank anim for this zone...")
-        ans = Blank
+        if (name == None):
+            print("No animation name specified - continuing with Blank anim..")
+    else:
+        if (name[0] != "."):
+            name = "." + name
+        try:
+            ans = importlib.import_module(name, "animations").Anim
+        except Exception as e:
+            print("Failed to import animation {}: {}".format(name, str(e)))
+            print("\tContinuing with Blank anim for this zone...")
+            ans = Blank
     return ans
 
 def run_strip(conf):
@@ -50,6 +52,7 @@ def run_strip(conf):
     anims_pkg = importlib.import_module("animations")
     offset = 0
     zones = []
+    # TODO: metazones, different anims based on wall clock time
     for z in conf.get("zones"):
         animName = z.get("animation")
         anim_cl = get_anim_class(animName)
@@ -59,21 +62,24 @@ def run_strip(conf):
             print("Invalid zone info - double check count/zone sizes")
     # TODO: if offset != count - make a filler "blank" zone
     
-    i = 0
+    if (conf.get("iters") != None):
+        run_zones_iter(strip, zones, conf.get("iters"))
+    else:
+        run_zones_inf(strip, zones)
 
-    # TODO: have two different loops - one for just infinite looping til death, one for a set number of iters
-    # because muh efficiency
-
+def run_zones_inf(strip, zones):
     while True:
         for z in zones:
             z.iter()
         strip.show()
-        # TODO: variable sleep time based on scheduling individual zone updates?
-        # :thinking:
-        time.sleep(50/1000.0)
-        if (conf.get("iters") != None):
-            i += 1
-            if (i < conf.get("iters")):
-                continue
-            else:
-                return
+        sleep_til_next(zones)
+
+def run_zones_iter(strip, zones, iters):
+    for i in range(iters):
+        for z in zones:
+            z.iter()
+        strip.show()
+        sleep_til_next(zones)
+
+def sleep_til_next(zones):
+    pass
