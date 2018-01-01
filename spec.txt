@@ -9,11 +9,11 @@ Base product reqs:
 
 Light controller should be a daemon that's controllable over dbus.
 
-Sidenotes:
-* maybe some easy way to invoke strip.setBrightness(<x>) at runtime
+Currently, all of the above is working. The daemon stuff needs to be fleshed out more, as does the CTL script.
 
-Maybe a control script that starts a daemon / communicates with it somehow?
+Additionally, I need to see about potentially controlling a rasp pi's PWM over GPIO as a non-root user with some udev rules. If this is possible, I may just be able to install a udev rule and a unit file, and allow the rest of the stuff to reside in user-owned space.
+
+Currently, since the script needs root, allowing users to run animations from user-owned directories is a decent security issue. I'll either need to figure out how to run the script as non-root, or it'll have to be a proper system daemon that runs as root.
 
 Additional goals:
 * some sort of web frontend (with simple TOTP auth - no password, just the 2fa) for reading & displaying the config.json
-* maybe git webhooks for the full thing

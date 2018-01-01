@@ -61,7 +61,7 @@ def main(path, debug=False):
 
 if (__name__ == "__main__"):
 	"""🦊🍑🍆💦😩"""
-	confpath = os.path.abspath("../config.json")
+	confpath = os.path.abspath("../config/config.json")
 	for idx, itm in enumerate(sys.argv):
 		if (itm == "--config"):
 			confpath = os.path.abspath(sys.argv[idx+1])
