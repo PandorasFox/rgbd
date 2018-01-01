@@ -2,22 +2,22 @@
 	"count":	240,
 	"pin":		18,
 	"freq":		800000,
-	"DMA":		5,
+	"DMA":		10,
 	"brightness":	128,
 	"invert":	false,
 	"channel":	0,
-	"strip":	"ws2812b",
+	"strip":	"ws281x",
 	"watch_thread":	true,
 	"zones": [
 		{
 			"name":		"primaryMon",
-			"length":	100,
+			"length":	140,
 			"animation":	"rainbow",
-			"step_delay":	0
+			"step_delay":	50
 		},
 		{
 			"name":		"secondaryMon",
-			"length":	40,
+			"length":	20,
 			"animation":	"solid",
 			"animation_config": {
 				"color": "#ffff00"
@@ -26,7 +26,7 @@
 		},
 		{
 			"name":		"under desk",
-			"length":	100,
+			"length":	80,
 			"animation":	"fade",
 			"animation_config": {
 				"colors": [
@@ -41,7 +41,7 @@
 				"steps":	50,	
 				"combine_zone":	true
 			},
-			"step_delay":	25
+			"step_delay":	50
 		}
 	]
 }

@@ -27,27 +27,3 @@ class Zone:
 
     def iter(self):
         self._anim.iter()
-
-""" 
-    Groups some Zones and treats them each as a single "pixel"
-    maybe this could be subclassed somehow (or just have setpixel overriden in the constructor?)
-"""
-
-""" future thoughts: maybe "advancedZone" for zones that have gaps in them that are run off of other zones or something? """
-
-""" also: zones that have multiple animations depending on the wall clock - will need to be tweaked as well """
-
-class MetaZone:
-    def __init__(self, strip, offset, zone_conf):
-        self.strip = strip
-        self.offset = offset
-        self.conf = zone_conf
-        self.zones = []
-
-    def setpixel(self, i, color):
-        if (i < 0 or i > len(self.zones)):
-            raise Exception("Invalid index for setpixel")
-        # needs to set all the pixels in zone[i] to color
-
-    def iter(self):
-        self.anim.iter()

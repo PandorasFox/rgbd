@@ -4,11 +4,14 @@ Base product reqs:
 * reading config.json
 * setting "zones" of different lengths/patterns on one strip
 * different animation support
-* controlling a "zone" as one single LED, or as a bunch of LEDs
-  * the entire thing will basically just be an array of zones, with their individual associated effects
 * controlling groups of zones as one zone (i.e. 3 zones each treated as an individual LED, and solid)
 * fading colors, and the math to go with that
 * when config.json is updated by another process, reload it, parse it, and restart the lights controller (or maybe just update it? idk)
+
+Sidenotes:
+* maybe some easy way to invoke strip.setBrightness(<x>) at runtime
+
+Maybe a control script that starts a daemon / communicates with it somehow?
 
 Additional goals:
 * some sort of web frontend (with simple TOTP auth - no password, just the 2fa) for reading & displaying the config.json
