@@ -7,7 +7,7 @@
 	"invert":	false,
 	"channel":	0,
 	"strip":	"ws281x",
-	"watch_thread":	true,
+	"anim_dir":	"",
 	"zones": [
 		{
 			"name":		"primaryMon",

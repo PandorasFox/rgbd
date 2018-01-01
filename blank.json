@@ -1,0 +1,19 @@
+{
+	"count":	240,
+	"pin":		18,
+	"freq":		800000,
+	"DMA":		10,
+	"brightness":	128,
+	"invert":	false,
+	"channel":	0,
+	"strip":	"ws281x",
+	"watch_thread":	true,
+	"zones": [
+		{
+			"name":		"blank",
+			"length":	240,
+			"animation":	"blank",
+			"step_delay":	-1
+		}
+	]
+}

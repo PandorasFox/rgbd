@@ -7,50 +7,64 @@ import os
 import daemon
 import lockfile
 import signal
+import multiprocessing
 
+import dbus_listener
+
+# TODO: make this a class too, because why not
 
 def loadconf(path):
-    with open(path) as conf:
-        return json.load(conf)
+	with open(path) as conf:
+		return json.load(conf)
 
-def lightStart(path):
-    conf = loadconf(path)
-    # pass conf to the controller
-    importlib.invalidate_caches()
-    anim = importlib.import_module("anim")
-    anim.run_strip(conf)
+def lightStart(strip, queue):
+	strip.animate(queue)
 
 def main(path, debug=False):
-    if (sys.version_info.major < 3):
-        raise Exception("must be running at least python 3")
-   
-    if (debug):
-        lightStart(path)
-    
-    importlib.invalidate_caches()
-    anim = importlib.import_module("anim")
+	if (sys.version_info.major < 3):
+		raise Exception("must be running at least python 3")
 
+	importlib.invalidate_caches()
+	Strip = importlib.import_module("strip").Strip
 
-    context = daemon.DaemonContext(
-        working_directory='/home/pandora/pandoras_box/controller/',
-        pidfile=lockfile.FileLock('/tmp/pandoras_box.pid'),
-        detach_process=True,
-    )
-    
-    context.signal_map = {
-            signal.SIGTERM: anim.cleanup,
-            signal.SIGHUP:  'terminate',
-    }
+	conf = loadconf(path)
+	strip = Strip(conf)
 
-    with context:
-        lightStart(path)
+	if (debug):
+		queue = multiprocessing.Queue()
+		lights = multiprocessing.Process(target=lightStart, args=(strip, queue,))
+		print("Animating...")
+		lights.start()
+		strip = None # destroy our copy
+
+	context = daemon.DaemonContext(
+		working_directory='/tmp/',
+		pidfile=lockfile.FileLock('/tmp/pandoras_box.pid'),
+		detach_process=True,
+	)
+
+	context.signal_map = {
+		signal.SIGTERM: strip.cleanup, # seems to be broken - best to control over lightctl
+		signal.SIGHUP:  'terminate',
+	}
+
+	with context:
+		queue = multiprocessing.Queue()
+		lights = multiprocessing.Process(target=lightStart, args=(strip, queue,))
+		print("Animating...")
+		lights.start()
+		strip = None # destroy our copy
+
+	# set up dbus stuff here
+	listener = dbus_listener.Listener(queue)
+	listener.listen()
 
 if (__name__ == "__main__"):
-    """🦊🍑🍆💦😩"""
-    confpath = os.path.abspath("../config.json")
-    for idx, itm in enumerate(sys.argv):
-        if (itm == "--config"):
-            confpath = os.path.abspath(sys.argv[idx+1])
+	"""🦊🍑🍆💦😩"""
+	confpath = os.path.abspath("../config.json")
+	for idx, itm in enumerate(sys.argv):
+		if (itm == "--config"):
+			confpath = os.path.abspath(sys.argv[idx+1])
 
-    main(confpath, True) # this is true for now, because dbus debugging comes next, and i definitely don't want to be running a daemon until i get the reload stuff working
-    sys.exit(0)
+	main(confpath, False)
+	sys.exit(0)
