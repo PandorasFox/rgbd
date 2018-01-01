@@ -53,33 +53,76 @@ def run_strip(conf):
     offset = 0
     zones = []
     # TODO: metazones, different anims based on wall clock time
+    # (i.e. one to fade into sunset, then a constant one after)
     for z in conf.get("zones"):
         animName = z.get("animation")
         anim_cl = get_anim_class(animName)
         zones.append(zone.Zone(strip, offset, anim_cl, z))
-        offset += z["length"]
+        offset += int(z["length"])
         if (offset > conf.get("count")):
             print("Invalid zone info - double check count/zone sizes")
     # TODO: if offset != count - make a filler "blank" zone
-    
+   
     if (conf.get("iters") != None):
         run_zones_iter(strip, zones, conf.get("iters"))
     else:
         run_zones_inf(strip, zones)
 
 def run_zones_inf(strip, zones):
+    first = True
     while True:
+        start = time.time()
         for z in zones:
-            z.iter()
+            if (z.draw or first):
+                z.iter()
+                z.draw = False
         strip.show()
-        sleep_til_next(zones)
+        end = time.time()
+        sleep_til_next(zones, end - start)
+        first = False
 
 def run_zones_iter(strip, zones, iters):
+    start = time.time()
     for i in range(iters):
         for z in zones:
             z.iter()
         strip.show()
-        sleep_til_next(zones)
+        end = time.time()
+    # no sleeping when limited iters
 
-def sleep_til_next(zones):
-    pass
+def sleep_til_next(zones, time_to_draw):
+    # my machine takes ~9.7ms per draw iteration, which is significant enough that it should be taken into account
+    # this func is insignificant enough to ignore (also, it'd be a pain to take care of properly)
+    # 3 cases:
+    # delay_time == -1 : do nothing (drawn once, then z.draw => false
+    # delay_time == 0  : set z.draw back to true, stick "0" into the times arr
+    # delay_time >  0  : decrement it, then check if it's <= 0
+    times = []
+    for zone in zones:
+        if (zone.delay_time > 0):
+            if (zone.delay_rem == 0):
+                zone.delay_rem = zone.delay_time - time_to_draw
+            else:
+                zone.delay_rem -= (time_to_draw * 1000)
+                if (zone.delay_rem <= 0):
+                    zone.delay_rem = 0
+                    zone.draw = True
+        elif (zone.delay_time == 0):
+            times.append(0)
+            zone.draw = True
+
+    if (len(times) != 0):
+        sleeptime = min(times)
+        if (sleeptime == 0):
+            return
+        time.sleep(sleeptime / 1000.0)
+
+        for zone in zones:
+            if (zone.delay_rem > 0):
+                zone.delay_rem -= sleeptime
+    else:
+        # all animations are currently static
+        # however, I might eventually have to change this if I do the "different animations based off wall-clock time" stuff
+        print("No animations to animate - try iterations instead")
+        sys.exit(1)
+        

@@ -6,4 +6,4 @@ The main purpose behind most of this is so that I can easily dim the brightness 
 
 The eventual goals are outlined in spec.txt
 
-Uses [rpi\_ws281x](https://github.com/jgarff/rpi_ws281x)
+Uses [rpi\_ws281x](https://github.com/jgarff/rpi_ws281x) and [colour](https://pypi.python.org/pypi/colour)

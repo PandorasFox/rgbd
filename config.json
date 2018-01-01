@@ -11,16 +11,37 @@
 	"zones": [
 		{
 			"name":		"primaryMon",
-			"length":	200,
-			"animation":	"rainbow"
+			"length":	100,
+			"animation":	"rainbow",
+			"step_delay":	0
 		},
 		{
-			"name":		"primaryMon",
+			"name":		"secondaryMon",
 			"length":	40,
 			"animation":	"solid",
 			"animation_config": {
-				"color": "#ff00ff"
-			}
+				"color": "#ffff00"
+			},
+			"step_delay":	-1
+		},
+		{
+			"name":		"under desk",
+			"length":	100,
+			"animation":	"fade",
+			"animation_config": {
+				"colors": [
+					"#00ffff",
+					"#ff00ff",
+					"#ff00ff",
+					"#ffffff",
+					"#ff00ff",
+					"#ff00ff",
+					"#00ffff"
+				],
+				"steps":	50,	
+				"combine_zone":	true
+			},
+			"step_delay":	25
 		}
 	]
 }
