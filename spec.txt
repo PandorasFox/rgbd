@@ -1,4 +1,4 @@
-The base product is just a python script that will read from a config.json file and control the strip based off of that appropriately, and will reload the config.json file when it is updated by another process.
+The base product is just a python script that will read from a config.json file and control the strip based off of that appropriately.
 
 Base product reqs:
 * reading config.json
@@ -6,7 +6,8 @@ Base product reqs:
 * different animation support
 * controlling groups of zones as one zone (i.e. 3 zones each treated as an individual LED, and solid)
 * fading colors, and the math to go with that
-* when config.json is updated by another process, reload it, parse it, and restart the lights controller (or maybe just update it? idk)
+
+Light controller should be a daemon that's controllable over dbus.
 
 Sidenotes:
 * maybe some easy way to invoke strip.setBrightness(<x>) at runtime

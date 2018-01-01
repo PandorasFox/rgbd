@@ -2,29 +2,30 @@ import json
 import sys
 import importlib
 
+import os
+
 import daemon
 import lockfile
 import signal
 
-import time
 
-def loadconf(path="../config.json"):
+def loadconf(path):
     with open(path) as conf:
         return json.load(conf)
 
-def lightStart():
-    conf = loadconf()
+def lightStart(path):
+    conf = loadconf(path)
     # pass conf to the controller
     importlib.invalidate_caches()
     anim = importlib.import_module("anim")
     anim.run_strip(conf)
 
-def main(debug=False):
+def main(path, debug=False):
     if (sys.version_info.major < 3):
         raise Exception("must be running at least python 3")
    
     if (debug):
-        lightStart()
+        lightStart(path)
     
     importlib.invalidate_caches()
     anim = importlib.import_module("anim")
@@ -42,9 +43,14 @@ def main(debug=False):
     }
 
     with context:
-        lightStart()
+        lightStart(path)
 
 if (__name__ == "__main__"):
     """🦊🍑🍆💦😩"""
-    main(True) # this is true for now, because dbus debugging comes next, and i definitely don't want to be running a daemon until i get the reload stuff working
+    confpath = os.path.abspath("../config.json")
+    for idx, itm in enumerate(sys.argv):
+        if (itm == "--config"):
+            confpath = os.path.abspath(sys.argv[idx+1])
+
+    main(confpath, True) # this is true for now, because dbus debugging comes next, and i definitely don't want to be running a daemon until i get the reload stuff working
     sys.exit(0)
