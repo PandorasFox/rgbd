@@ -14,6 +14,7 @@ except dbus.exceptions.DBusException as e:
 # TODO: argparse
 
 msg = float(input("brightness val?> "))
+
 if (0 < msg and msg < 1):
 	msg =int(255 * msg)
 elif (msg < 0 or msg > 255):

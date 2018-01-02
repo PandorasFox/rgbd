@@ -96,6 +96,8 @@ class Strip:
 	def setup_zones(self):
 		offset = 0
 		for z in self.config.get("zones"):
+			if (int(z.get("length")) == 0):
+				continue
 			animName = z.get("animation")
 			anim_cl = self.load_anim_class(animName)
 			if (anim_cl == self.blank):
@@ -113,13 +115,6 @@ class Strip:
 				"step_delay": -1
 			}))
 
-	def cleanup(self):
-		# NOTE: this needs to be reworked a bit
-		# possibly needs to raise an event so the dbus stuff also cleans up?
-		for i in range(self.strip.numPixels()):
-			self.strip.setPixelColor(i, 0)
-		sys.exit(1)
-
 	def animate(self, queue):
 		first = True
 		while True:
@@ -134,13 +129,18 @@ class Strip:
 			first = False
 			while (not queue.empty()):
 				self.process_msg(queue.get())
-
+	
+	def blank_strip(self):
+		for i in range(self.strip.numPixels()):
+			self.strip.setPixelColor(i, 0)
+		self.strip.show()
 
 	def process_msg(self, msg):
 		# NOTE: maybe break out into a <commands> module, like <animations>?
 		if (msg["command"] == "brightness"):
+			# TODO: maybe a gradual fade? hnn
 			self.strip.setBrightness(msg["data"]["value"])
-			print("Brightness stepped down to {}".format(msg["data"]["value"]))
+			print("Brightness adjusted to {}".format(msg["data"]["value"]))
 		else:
 			print("Unknown/invalid message: {}".format(msg))
 

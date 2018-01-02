@@ -11,22 +11,23 @@
 	"zones": [
 		{
 			"name":		"primaryMon",
-			"length":	140,
+			"length":	100,
 			"animation":	"rainbow",
 			"step_delay":	50
 		},
 		{
 			"name":		"secondaryMon",
-			"length":	20,
-			"animation":	"solid",
+			"length":	40,
+			"animation":	"morse",
 			"animation_config": {
-				"color": "#ffff00"
+				"color": "#ff3300",
+				"text":  "hewwo?  "
 			},
-			"step_delay":	-1
+			"step_delay":	250
 		},
 		{
 			"name":		"under desk",
-			"length":	80,
+			"length":	100,
 			"animation":	"fade",
 			"animation_config": {
 				"colors": [

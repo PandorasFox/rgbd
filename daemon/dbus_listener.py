@@ -1,6 +1,7 @@
 import dbus, dbus.service, dbus.exceptions, dbus.mainloop.glib
 import gi.repository.GLib
 import sys
+import signal
 
 class Handler(dbus.service.Object):
 	def __init__(self, queue, bus_name):
@@ -11,7 +12,7 @@ class Handler(dbus.service.Object):
 		in_signature="s", out_signature="b")
 	def command(self, input_str):
 		print("received command: {}".format(input_str))
-		self.queue.put(input_str)
+		self.queue.put({"command": input_str})
 		return True
 
 	@dbus.service.method("fox.pandora.rgbd.lightctl",
@@ -31,6 +32,7 @@ class Listener():
 		self.queue = queue
 		dbus_loop = dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 		self.loop = gi.repository.GLib.MainLoop()
+
 		try:
 			self.bus_name = dbus.service.BusName("fox.pandora.rgbd",
 				bus=dbus.SystemBus(),
@@ -38,14 +40,14 @@ class Listener():
 		except dbus.exceptions.NameExistsException:
 			print("Service is already running")
 			sys.exit(1)
-
-	def listen(self):
+		
 		try:
 			self.handler = Handler(self.queue, self.bus_name)
 			self.loop.run()
-		except KeyboardInterrupt as e:
+		except KeyboardInterrupt:
 			pass
 		except Exception as e:
 			print("Unexpected exception: {}".format(str(e)))
 		finally:
+			print("exiting dbus loop...")
 			self.loop.quit()
