@@ -10,9 +10,9 @@ class Handler(dbus.service.Object):
 
 	@dbus.service.method("fox.pandora.rgbd.lightctl",
 		in_signature="s", out_signature="b")
-	def command(self, input_str):
-		print("received command: {}".format(input_str))
-		self.queue.put({"command": input_str})
+	def command(self, command):
+		print("received command: {}".format(command))
+		self.queue.put({"command": str(command)})
 		return True
 
 	@dbus.service.method("fox.pandora.rgbd.lightctl",

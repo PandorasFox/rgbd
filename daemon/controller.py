@@ -25,18 +25,26 @@ class LightsController:
 			raise Exception("must be running at least python 3")
 
 		importlib.invalidate_caches()
-		Strip = importlib.import_module("strip").Strip
-
-		self.strip = Strip(self.conf)
 
 		if (self.debug):
+			self.strip = importlib.import_module("strip").Strip(self.conf, self)
 			self.queue = multiprocessing.Queue()
-			self.lights = multiprocessing.Process(target=self.lightStart,)
-			print("Animating...")
-			self.lights.start()
-			self.listener = dbus_listener.Listener(self.queue)
-			self.listener.listen()
-			sys.exit(0)
+			
+			self.listener_thread = multiprocessing.Process(target=dbus_listener.Listener, args=(self.queue,), daemon=True)
+			self.listener_thread.start()
+
+			try:
+				print("animating...")
+				self.strip.animate(self.queue)
+			except Exception:
+				pass
+			finally:
+				# if sent a DBUS 'stop' command, cleanup is triggered twice during debugging.
+				# maybe we let it die gracefully,
+				# or bind a signal and just os.kill(os.getpid(), signal.SIGTERM) ?
+				# since sigterm *should* bypass finally blocks - maybe a bit bad, dunno.
+				# it's just extra output during debugging for now =)
+				self.cleanup()
 
 		self.context = daemon.DaemonContext(
 			working_directory='/tmp/',
@@ -48,17 +56,15 @@ class LightsController:
 
 		self.context.signal_map = {
 			signal.SIGTERM: self.cleanup,
+			signal.SIGINT:  self.cleanup,
 			signal.SIGHUP:  'terminate',
 		}
 		
 		with self.context:
-			self.parent_pid = os.getpid()
-			print("daemon context: my pid is {}".format(os.getpid()))
+			self.strip = importlib.import_module("strip").Strip(self.conf, self)
 			self.queue = multiprocessing.Queue()
 			self.listener_thread = multiprocessing.Process(target=dbus_listener.Listener, args=(self.queue,), daemon=True)
 			self.listener_thread.start()
-			
-			print("Animating...")
 			self.strip.animate(self.queue)
 
 	def cleanup(self, signum=None, frame=None):

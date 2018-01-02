@@ -42,9 +42,10 @@ class Zone:
 		self._anim.iter()
 
 class Strip:
-	def __init__(self, config):
+	def __init__(self, config, controller):
 		self.config = config
 		self.strip  = self.setup_strip()
+		self._controller = controller
 		self.blank = BlankAnim
 		# TODO: get the animations location from config, add to path, then import
 		# NOTE: in the interest of security, since this script runs as root, the animation location
@@ -141,6 +142,8 @@ class Strip:
 			# TODO: maybe a gradual fade? hnn
 			self.strip.setBrightness(msg["data"]["value"])
 			print("Brightness adjusted to {}".format(msg["data"]["value"]))
+		elif (msg["command"] == "stop"):
+			self._controller.cleanup()
 		else:
 			print("Unknown/invalid message: {}".format(msg))
 
