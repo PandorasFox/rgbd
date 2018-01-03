@@ -8,4 +8,6 @@ The eventual goals are outlined in spec.txt. They're subject to change.
 
 Uses [rpi\_ws281x](https://github.com/jgarff/rpi_ws281x), [colour](https://pypi.python.org/pypi/colour), and [python-daemon](https://pypi.python.org/pypi/python-daemon/).
 
+You *must* be controlling your pi over SPI for this, so it can run as a non-root user. Specifically, you'll probably need to modify your `/boot/config.txt` as outlined in `rpi\_ws281x`'s readme.
+
 DBUS is used for passing messages from the ctl script to the daemon. A sample dbus conf file is included; daemon details are still being fleshed out for where it will run from/etc.

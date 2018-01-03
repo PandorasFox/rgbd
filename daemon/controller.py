@@ -23,13 +23,15 @@ class LightsController:
 	def run(self):
 		if (sys.version_info.major < 3):
 			raise Exception("must be running at least python 3")
+		if (os.getuid() == 0 or os.getgid() == 0):
+			raise Exception("cannot run as root - please use SPI instead of PWM")
 
 		importlib.invalidate_caches()
 
 		if (self.debug):
 			self.strip = importlib.import_module("strip").Strip(self.conf, self)
 			self.queue = multiprocessing.Queue()
-			
+
 			self.listener_thread = multiprocessing.Process(target=dbus_listener.Listener, args=(self.queue,), daemon=True)
 			self.listener_thread.start()
 
@@ -59,7 +61,7 @@ class LightsController:
 			signal.SIGINT:  self.cleanup,
 			signal.SIGHUP:  'terminate',
 		}
-		
+
 		with self.context:
 			self.strip = importlib.import_module("strip").Strip(self.conf, self)
 			self.queue = multiprocessing.Queue()
@@ -71,7 +73,7 @@ class LightsController:
 		self.strip.blank_strip()
 		os.kill(self.listener_thread.pid, signal.SIGINT)
 		self.listener_thread.join(timeout=0.25)
-		
+
 		if (self.listener_thread.is_alive()):
 			os.kill(self.listener_thread.pid, signal.SIGKILL)
 			print("Had to SIGKILL child - pretty bad; potential orphans")

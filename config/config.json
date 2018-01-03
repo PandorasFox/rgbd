@@ -1,6 +1,6 @@
 {
 	"count":	240,
-	"pin":		18,
+	"pin":		10,
 	"freq":		800000,
 	"DMA":		10,
 	"brightness":	128,
@@ -13,11 +13,11 @@
 			"name":		"primaryMon",
 			"length":	100,
 			"animation":	"rainbow",
-			"step_delay":	50
+			"step_delay":	20
 		},
 		{
 			"name":		"secondaryMon",
-			"length":	40,
+			"length":	0,
 			"animation":	"morse",
 			"animation_config": {
 				"color": "#ff3300",
@@ -27,7 +27,7 @@
 		},
 		{
 			"name":		"under desk",
-			"length":	100,
+			"length":	140,
 			"animation":	"fade",
 			"animation_config": {
 				"colors": [
@@ -39,10 +39,10 @@
 					"#ff00ff",
 					"#00ffff"
 				],
-				"steps":	50,	
+				"steps":	150,	
 				"combine_zone":	true
 			},
-			"step_delay":	50
+			"step_delay":	10
 		}
 	]
 }

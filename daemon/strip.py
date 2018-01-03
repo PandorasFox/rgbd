@@ -42,14 +42,12 @@ class Zone:
 		self._anim.iter()
 
 class Strip:
-	def __init__(self, config, controller):
+	def __init__(self, config, controller, daemon=True):
 		self.config = config
 		self.strip  = self.setup_strip()
 		self._controller = controller
 		self.blank = BlankAnim
 		# TODO: get the animations location from config, add to path, then import
-		# NOTE: in the interest of security, since this script runs as root, the animation location
-		#       should also be like /etc/lightctl/animations/ or something else owned by root
 		importlib.invalidate_caches()
 		self.anims_pkg = importlib.import_module("animations")
 		self.zones = []

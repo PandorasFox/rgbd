@@ -11,9 +11,6 @@ Light controller should be a daemon that's controllable over dbus.
 
 Currently, all of the above is working. The daemon stuff needs to be fleshed out more, as does the CTL script.
 
-Additionally, I need to see about potentially controlling a rasp pi's PWM over GPIO as a non-root user with some udev rules. If this is possible, I may just be able to install a udev rule and a unit file, and allow the rest of the stuff to reside in user-owned space.
+The script now should only be run as a regular user, using SPI. I need to flesh it out / set it up a bit better to be used as that, and possibly provide some sort of installer / raspbian package.
 
-Currently, since the script needs root, allowing users to run animations from user-owned directories is a decent security issue. I'll either need to figure out how to run the script as non-root, or it'll have to be a proper system daemon that runs as root.
-
-Additional goals:
-* some sort of web frontend (with simple TOTP auth - no password, just the 2fa) for reading & displaying the config.json
+I may also need to use the dbus session bus instead of system bus. However, my raspi running without a graphical session has no session bus...
