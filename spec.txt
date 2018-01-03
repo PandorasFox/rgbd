@@ -11,6 +11,8 @@ Light controller should be a daemon that's controllable over dbus.
 
 Currently, all of the above is working. The daemon stuff needs to be fleshed out more, as does the CTL script.
 
+I probably need to ship my own daemonization. It'll be fun to learn that, anyways.
+
 The script now should only be run as a regular user, using SPI. I need to flesh it out / set it up a bit better to be used as that, and possibly provide some sort of installer / raspbian package.
 
 I may also need to use the dbus session bus instead of system bus. However, my raspi running without a graphical session has no session bus...

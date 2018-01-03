@@ -8,11 +8,15 @@
 	"channel":	0,
 	"strip":	"ws281x",
 	"anim_dir":	"",
+	"blank_on_exit": false,
 	"zones": [
 		{
 			"name":		"primaryMon",
-			"length":	100,
+			"length":	240,
 			"animation":	"rainbow",
+			"animation_config": {
+				"fade_as_whole": true
+			},
 			"step_delay":	20
 		},
 		{
@@ -27,7 +31,7 @@
 		},
 		{
 			"name":		"under desk",
-			"length":	140,
+			"length":	0,
 			"animation":	"fade",
 			"animation_config": {
 				"colors": [

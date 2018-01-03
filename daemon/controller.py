@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import json
 import sys
 import importlib
@@ -15,6 +17,10 @@ class LightsController:
 	def __init__(self, confpath, debug):
 		self.conf = self.loadconf(confpath)
 		self.debug = debug
+		if (self.conf.get("blank_on_exit") == True):
+			self.blank_on_exit = True
+		else:
+			self.blank_on_exit = False
 
 	def loadconf(self, path):
 		with open(path) as conf:
@@ -70,7 +76,10 @@ class LightsController:
 			self.strip.animate(self.queue)
 
 	def cleanup(self, signum=None, frame=None):
-		self.strip.blank_strip()
+		# NOTE: possibly allow for exiting without blanking, if we received a restart command
+		# maybe a restart --noblank?
+		if (self.blank_on_exit):
+			self.strip.blank_strip()
 		os.kill(self.listener_thread.pid, signal.SIGINT)
 		self.listener_thread.join(timeout=0.25)
 

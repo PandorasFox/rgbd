@@ -1,6 +1,6 @@
 {
 	"count":	240,
-	"pin":		18,
+	"pin":		10,
 	"freq":		800000,
 	"DMA":		10,
 	"brightness":	128,
