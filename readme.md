@@ -1,16 +1,14 @@
 # RGBD
 
-I'm writing a daemon for controlling my ws2812B RGB LED strips with my raspberry pi.
+I'm writing a daemon for controlling my ws2812B RGB LED strips with my raspberry pi. Security is something of a concern, so this is written so as to never actually require root.
 
 The main purpose behind most of this is so that I can easily dim the brightness on the lights (or change the lighting patterns/mood) from my phone, in my bed. Really.
-
-The eventual goals are outlined in spec.txt. They're subject to change.
 
 Uses [rpi\_ws281x](https://github.com/jgarff/rpi_ws281x) and [colour](https://pypi.python.org/pypi/colour).
 
 You *must* be controlling your pi over SPI for this, so it can run as a non-root user. Specifically, you'll probably need to modify your `/boot/config.txt` as outlined in `rpi\_ws281x`'s readme.
 
-DBUS is used for passing messages from the ctl script to the daemon. A sample dbus conf file is included; daemon details are still being fleshed out for where it will run from/etc.
+DBUS is used for passing messages from the ctl script to the daemon. If you don't have a dbus session bus (i.e. from an X session), I've included some systemd unit files.
 
 ## Wiring
 
@@ -29,16 +27,30 @@ Install [rpi\_ws281x](https://github.com/jgarff/rpi_ws281x) and [colour](https:/
 
 Currently, the upstream version of `rpi_ws281x` has a bug that prevents using SPI as non-root; I've fixed the bug [here](https://github.com/pandorasfox/rpi_ws281x). Once it gets merged, this will no longer be needed.
 
+## Installing
+
+* Copy the config file(s) to `~/.config/rgbd/`. 
+* Copy the systemd unit files to `~/.local/share/systemd/user/`.
+* Copy the daemon files to `~/.local/share/rgbd/daemon/`.
+* Copy the animation files to `~/.loca/share/rgbd/animations/`.
+
+You must be a member of the `gpio` group in order to run this code.
+
 ## Usage
 
-For now, the only part of this entire project that requires `sudo` is placing the `dbus` conf file in `dbus-rules` into `/etc/dbus-1/system.d/`.
+After installing the files, you should be able to just `systemctl --user enable --now rgbd`. You may need to tweak your config file.
 
-After that, you can copy the included `config.json` to `~/.config/rgbd/config.json`, and copy the animations directory to `~/.local/share/rgbd/animations/`.
+## This project and root/sudo
 
-You can then run `rgbd` by invoking `./lightctl start`.
+A big part of why I wrote this daemon is so that animations can be dynamically loaded, and for good dynamic control of my lights. If something is going to be dynamically loading and executing script files, _it should not be doing that as root_.
 
-Systemd unit files are planned on being included, as is an installer script.
+This left me with a few options:
 
-I also need to figure out how to fully decouple lightctl from the scripts - they need to be importable somehow (or I just need to install to ~/.local/share).
+* Run the animation scripts in a separate downgraded process, with limited shared resources. Pretty workable, but difficult to rig up animation timings.
+* Disallow dynamic config loading (boo).
+* Set up a root daemon we can control (less performant/communication is hard)
+* Run everything as our own user.
 
-I also need to look into the dbus session bus and launching that ourselves.
+The last option was the best, but required a decent amount of setup to get right.
+
+If you want the script to persist beyond your session, then you _will_ need `sudo` rights to set some loginctl stuff, but that's it. For all regular usage, it can just stay running as a user daemon without any need for elevated permissions, ever.
