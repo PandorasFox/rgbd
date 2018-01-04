@@ -1,6 +1,8 @@
 import importlib
+import os
 import sys
 import time
+# must have install rpi_ws281x
 import neopixel
 
 """ default animation that just blanks pixels. Fallback. """
@@ -26,9 +28,7 @@ class Zone:
 		# -1 = never redraw (i.e. static lighting)
 		# 0 = redraw as soon as possible
 		# >0 = <x> ms
-		self.delay_time = self.conf.get("step_delay")
-		if (self.delay_time == None):
-			self.delay_time = 0
+		self.delay_time = self.conf.get("step_delay", 0)
 		# everything is initially drawn
 		self.delay_rem = 0
 		self.draw = True
@@ -44,10 +44,18 @@ class Zone:
 class Strip:
 	def __init__(self, config, controller, daemon=True):
 		self.config = config
+		self.strip_conf = config["strip_config"]
 		self.strip  = self.setup_strip()
 		self._controller = controller
 		self.blank = BlankAnim
-		# TODO: get the animations location from config, add to path, then import
+		# attempt to insert the animations dir into our path
+		# because I'm not picky, I also try up one level (after the actually given dir)
+		anim_path_str = self.config.get("animations_path", "~/.local/share/rgbd/animations")
+		self.exp_path = os.path.abspath(os.path.expanduser(anim_path_str))
+		self.short_path = "/".join(self.exp_path.split("/")[:-1])
+		sys.path.insert(1, self.short_path)
+		sys.path.insert(1, self.exp_path)
+		
 		importlib.invalidate_caches()
 		self.anims_pkg = importlib.import_module("animations")
 		self.zones = []
@@ -55,31 +63,29 @@ class Strip:
 
 
 	def setup_strip(self):
-		brightness = self.config.get("brightness")
+		brightness = self.strip_conf.get("brightness")
 		if ( 0 < brightness and brightness < 1):
-			brightness *= 255
-		strip_type = self.config.get("strip")
+			brightness = int(brightness * 255)
+		strip_type = self.strip_conf.get("strip")
 		if (strip_type == "ws281x"):
 			strip_type = neopixel.ws.WS2811_STRIP_GRB
 		strip = neopixel.Adafruit_NeoPixel(
-				self.config.get("count"),
-				self.config.get("pin"),
-				self.config.get("freq"),
-				self.config.get("DMA"),
-				self.config.get("invert"),
-				brightness,
-				self.config.get("channel"),
-				strip_type
+			self.strip_conf.get("count"),
+			self.strip_conf.get("pin"),
+			self.strip_conf.get("freq"),
+			self.strip_conf.get("DMA"),
+			self.strip_conf.get("invert"),
+			brightness,
+			self.strip_conf.get("channel"),
+			strip_type
 		)
 		strip.begin()
 		return strip
 
 	def load_anim_class(self, name):
 		# name = name.lower() # maybe I shouldn't do this?
-		if (name == None or name == "blank"):
+		if (name == "blank"):
 			ans = self.blank
-			if (name == None):
-				print("No animation name specified - continuing with Blank anim..")
 		else:
 			if (name[0] != "."):
 				name = "." + name
@@ -97,15 +103,15 @@ class Strip:
 		for z in self.config.get("zones"):
 			if (int(z.get("length")) == 0):
 				continue
-			animName = z.get("animation")
+			animName = z.get("animation", "blank")
 			anim_cl = self.load_anim_class(animName)
 			if (anim_cl == self.blank):
 				z["step_delay"] = -1
 			self.zones.append(Zone(self.strip, offset, anim_cl, z))
 			offset += int(z["length"])
-			if (offset > self.config.get("count")):
+			if (offset > self.strip_conf.get("count")):
 				print("Invalid zone info - double check count/zone sizes")
-		remaining = self.config.get("count") - offset
+		remaining = self.strip_conf.get("count") - offset
 		if (remaining > 0):
 			print("{} pixels not part of a zone; creating a blank zone to cover them".format(remaining))
 			zones.append(Zone(self.strip, offset, self.blank, {

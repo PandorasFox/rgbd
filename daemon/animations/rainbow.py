@@ -6,11 +6,15 @@ class Anim:
 		self.zone = zone
 		self.iters = 0
 		self.length = zone.length
-		self.gen_wheel(self.length)
 		self.conf = custom
 		self.whole = False
-		if (self.conf != None and self.conf.get("fade_as_whole") == True):
-			self.whole = True
+		self.steps = self.length
+		if (self.conf != None):
+			self.whole = self.conf.get("fade_as_whole")
+			steps = self.conf.get("steps")
+			if (steps != None):
+				self.steps = steps
+		self.gen_wheel(steps)
 
 	def gen_wheel(self, num):
 		self.colors = []

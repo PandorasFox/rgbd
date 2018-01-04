@@ -15,9 +15,10 @@
 			"length":	240,
 			"animation":	"rainbow",
 			"animation_config": {
-				"fade_as_whole": true
+				"fade_as_whole": true,
+				"steps":	1500
 			},
-			"step_delay":	20
+			"step_delay":	75
 		},
 		{
 			"name":		"secondaryMon",
