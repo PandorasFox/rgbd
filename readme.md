@@ -21,6 +21,8 @@ My wiring setup is as follows:
 
 A 3.3V -> 5V voltage step is not required for the WS2812B, since (most) 2812B strips take 3.3-5V DIN, since DIN and power have been decoupled and no longer need to be run at the same voltage.
 
+Heavy CPU usage can cause SPI to flicker a bit, which is one of the tradeoffs.
+
 ## Setup
 
 Install [rpi\_ws281x](https://github.com/jgarff/rpi_ws281x) and [colour](https://pypi.python.org/pypi/colour). Make sure to follow the instructions for SPI as given in the `rpi_ws281x` repo.
@@ -33,6 +35,7 @@ Currently, the upstream version of `rpi_ws281x` has a bug that prevents using SP
 * Copy the systemd unit files to `~/.local/share/systemd/user/`.
 * Copy the daemon files to `~/.local/share/rgbd/daemon/`.
 * Copy the animation files to `~/.loca/share/rgbd/animations/`.
+* Put `lightctl` somewhere in your path (`~/.local/bin/` or `/usr/local/bin/`).
 
 You must be a member of the `gpio` group in order to run this code.
 
