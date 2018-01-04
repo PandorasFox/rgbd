@@ -35,7 +35,7 @@ class Listener():
 
 		try:
 			self.bus_name = dbus.service.BusName("fox.pandora.rgbd",
-				bus=dbus.SystemBus(),
+				bus=dbus.SessionBus(),
 				do_not_queue=True)
 		except dbus.exceptions.NameExistsException:
 			print("Service is already running")

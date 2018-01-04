@@ -35,7 +35,7 @@ class LightCTL:
 		
 		import dbus, dbus.exceptions
 		try:
-			bus = dbus.SystemBus()
+			bus = dbus.SessionBus()
 			self.dbus = bus.get_object("fox.pandora.rgbd", "/fox/pandora/rgbd/lightctl")
 		except dbus.exceptions.DBusException as e:
 			print("Unable to initialize dbus connection. Please ensure the daemon is running with < command in the future >")
