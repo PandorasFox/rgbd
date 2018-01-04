@@ -1,14 +1,23 @@
 {
-	"count":	240,
-	"pin":		10,
-	"freq":		800000,
-	"DMA":		10,
-	"brightness":	128,
-	"invert":	false,
-	"channel":	0,
-	"strip":	"ws281x",
-	"anim_dir":	"",
-	"blank_on_exit": false,
+	"daemon": {
+		"stdout": "/tmp/rgbd.stdout",
+		"stdout_mode": "w",
+		"stderr": "/tmp/rgbd.stderr",
+		"stderr_mode": "w"
+	},
+	"strip_config": {
+		"count":	240,
+		"pin":		10,
+		"freq":		800000,
+		"DMA":		10,
+		"brightness":	128,
+		"invert":	false,
+		"channel":	0,
+		"strip":	"ws281x",
+		"anim_dir":	"",
+		"blank_on_exit": false
+	},
+	"animations_path": "~/.local/share/rgbd/animations",
 	"zones": [
 		{
 			"name":		"primaryMon",
