@@ -3,7 +3,7 @@
 import os
 import sys
 import argparse
-import daemon.controller
+import daemon.daemon
 
 class LightCTL:
 	def __init__(self):
@@ -30,7 +30,7 @@ class LightCTL:
 	def process_command(self):
 		if (self.args.command in ["start", "stop", "restart"]):
 			cfg_path = os.path.abspath(os.path.expanduser(self.args.config))
-			self.daemon = daemon.controller.RGBd(cfg_path)
+			self.daemon = daemon.daemon.RGBd(cfg_path)
 			func = getattr(self.daemon, self.args.command)
 			func()
 			sys.exit(0)

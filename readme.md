@@ -6,11 +6,7 @@ The main purpose behind most of this is so that I can easily dim the brightness 
 
 The eventual goals are outlined in spec.txt. They're subject to change.
 
-Uses [rpi\_ws281x](https://github.com/jgarff/rpi_ws281x), [colour](https://pypi.python.org/pypi/colour), and [python-daemon](https://pypi.python.org/pypi/python-daemon/).
-
-For a more performant version of `python-daemon`, please run the following command:
-
-`sudo pip3 install git+https://github.com/PandorasFox/python-daemon`. 
+Uses [rpi\_ws281x](https://github.com/jgarff/rpi_ws281x) and [colour](https://pypi.python.org/pypi/colour).
 
 You *must* be controlling your pi over SPI for this, so it can run as a non-root user. Specifically, you'll probably need to modify your `/boot/config.txt` as outlined in `rpi\_ws281x`'s readme.
 

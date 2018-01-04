@@ -8,7 +8,7 @@ import signal
 import sys
 import time
 
-from . import dbus_listener
+from . import dbus
 from . import strip
 
 class RGBd:
@@ -44,7 +44,7 @@ class RGBd:
 			raise Exception("This daemon should not be run as root due to security reasons.\nPlease control your ws281x using SPI instead of PWM.")
 
 		self.queue = multiprocessing.Queue()
-		self.listener_thread = multiprocessing.Process(target=dbus_listener.Listener, args=(self.queue,), daemon=True)
+		self.listener_thread = multiprocessing.Process(target=dbus.Listener, args=(self.queue,), daemon=True)
 		self.listener_thread.start()
 
 		self.strip = strip.Strip(self.conf, self)
