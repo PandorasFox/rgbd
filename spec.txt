@@ -9,10 +9,10 @@ Base product reqs:
 
 Light controller should be a daemon that's controllable over dbus.
 
-Currently, all of the above is working. The daemon stuff needs to be fleshed out more, as does the CTL script.
+Everything is working.
 
-I probably need to ship my own daemonization. It'll be fun to learn that, anyways.
+New plans:
 
-The script now should only be run as a regular user, using SPI. I need to flesh it out / set it up a bit better to be used as that, and possibly provide some sort of installer / raspbian package.
-
-I may also need to use the dbus session bus instead of system bus. However, my raspi running without a graphical session has no session bus...
+* More direct control through lightctl (i.e. a zone can be told to be controlled by lightctl, and lightctl can set its colors. Slow, but nice for network-related stuff).
+* Different animations on timers.
+* An install script.
