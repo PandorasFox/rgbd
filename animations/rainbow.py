@@ -18,8 +18,8 @@ class Anim:
 
 	def gen_wheel(self, num):
 		self.colors = []
-		for i in range(self.length):
-			self.colors.append(common.col_wheel(i, self.length))
+		for i in range(num):
+			self.colors.append(common.col_wheel(i, num))
 
 	def iter(self):
 		if (self.whole):

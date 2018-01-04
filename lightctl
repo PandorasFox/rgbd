@@ -3,7 +3,6 @@
 import os
 import sys
 import argparse
-import daemon.daemon
 
 class LightCTL:
 	def __init__(self):
@@ -30,9 +29,7 @@ class LightCTL:
 	def process_command(self):
 		if (self.args.command in ["start", "stop", "restart"]):
 			cfg_path = os.path.abspath(os.path.expanduser(self.args.config))
-			self.daemon = daemon.daemon.RGBd(cfg_path)
-			func = getattr(self.daemon, self.args.command)
-			func()
+			print("sorry, run the daemon script directly")
 			sys.exit(0)
 		# other commands involve DBUS.... let's init it.
 		
@@ -44,8 +41,8 @@ class LightCTL:
 			print("Unable to initialize dbus connection. Please ensure the daemon is running with < command in the future >")
 			sys.exit(2)
 
-		if (self.command == "brightness"):
-			b = args.brightness_level
+		if (self.args.command == "set-brightness"):
+			b = self.args.brightness_level
 			if (0 < b and b < 1):
 				b = int(b*255)
 			elif (0 <= b and b < 256):
@@ -53,7 +50,12 @@ class LightCTL:
 			else:
 				print("Invalid brightness given!")
 				sys.exit(1)
-			result = self.dbus.brightness(b)
+			self.dbus.brightness(b)
+			sys.exit(0)
+
+		self.parser.print_help()
+		sys.exit(1)
+
 
 if (__name__ == "__main__"):
 	"""🦊🍑🍆💦😩"""

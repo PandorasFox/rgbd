@@ -8,8 +8,8 @@ import signal
 import sys
 import time
 
-from . import dbus
-from . import strip
+import dbus_listener
+import strip
 
 class RGBd:
 	def __init__(self, confpath):
@@ -44,7 +44,7 @@ class RGBd:
 			raise Exception("This daemon should not be run as root due to security reasons.\nPlease control your ws281x using SPI instead of PWM.")
 
 		self.queue = multiprocessing.Queue()
-		self.listener_thread = multiprocessing.Process(target=dbus.Listener, args=(self.queue,), daemon=True)
+		self.listener_thread = multiprocessing.Process(target=dbus_listener.Listener, args=(self.queue,), daemon=True)
 		self.listener_thread.start()
 
 		self.strip = strip.Strip(self.conf, self)
@@ -184,3 +184,29 @@ class RGBd:
 		""" ez """
 		self.stop(True)
 		self.start()
+
+
+if (__name__ == "__main__"):
+	parser = argparse.ArgumentParser()
+	commands = parser.add_subparsers(dest="command")
+
+	stop_cmd = commands.add_parser("stop")
+	stop_cmd.add_argument("-c", "--config", help="give a new config file for the currently-running daemon to use", default="~/.config/rgbd/config.json")
+
+	start_cmd = commands.add_parser("start")
+	start_cmd.add_argument("-c", "--config", help="give a new config file for the currently-running daemon to use", default="~/.config/rgbd/config.json")
+
+	restart_cmd = commands.add_parser("restart")
+	restart_cmd.add_argument("-c", "--config", help="give a new config file for the currently-running daemon to use", default="~/.config/rgbd/config.json")
+
+	args = parser.parse_args()
+
+	if (args.command):
+		cfg_path = os.path.abspath(os.path.expanduser(args.config))
+		daemon = RGBd(cfg_path)
+		
+		getattr(daemon, args.command)()
+		sys.exit(0)
+	else:
+		parser.print_help()
+		sys.exit(0)
