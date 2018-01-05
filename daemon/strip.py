@@ -132,7 +132,12 @@ class Strip:
 			self.sleep_til_next(end - start)
 			first = False
 			while (not queue.empty()):
-				self.process_msg(queue.get())
+				try:
+					self.process_msg(queue.get())
+				except Exception as e:
+					# TODO: investigate why the sys.stderr.write fails, but the print() works...
+					sys.stderr.write("unexpected error parsing message: {}".format(str(e)))
+					print("unexpected error parsing message: {}".format(str(e)))
 	
 	def blank_strip(self):
 		for i in range(self.strip.numPixels()):
@@ -145,6 +150,9 @@ class Strip:
 			# TODO: maybe a gradual fade? hnn
 			self.strip.setBrightness(msg["data"]["value"])
 			print("Brightness adjusted to {}".format(msg["data"]["value"]))
+		elif (msg["command"] == "setpixel"):
+			self.strip.setPixelColor(msg["data"]["pos"], msg["data"]["color"])
+			print("Pixel {} set to {}".format(msg["data"]["pos"], hex(msg["data"]["color"])))
 		else:
 			print("Unknown/invalid message: {}".format(msg))
 
