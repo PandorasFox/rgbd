@@ -1,0 +1,104 @@
+#!/usr/bin/env python3
+import argparse
+import os
+import shutil
+import stat
+import sys
+
+# put ourselves in the right location for installing
+os.chdir(os.path.dirname(__file__))
+
+def parse_args():
+	parser = argparse.ArgumentParser()
+	parser.add_argument("--clean",               help="Clean install (attempts an uninstall prior to installing).", action="store_true")
+
+	commands = parser.add_subparsers(dest="command")
+	# for dir copies
+	parser.add_argument("-c", "--config-prefix", help="The location to install config files to.",       default="~/.config/")
+	parser.add_argument("-s", "--share-prefix",  help="The location to install daemon data to.",        default="~/.local/share/")
+	# for individual files
+	parser.add_argument("-b", "--bin-dir",       help="The location to install executable files to.",   default="~/.local/bin/")
+	parser.add_argument("-u", "--unit-file-dir", help="The location to install systemd unit files to.", default="~/.local/share/systemd/user/")
+	
+	inst = commands.add_parser("install")
+	# maybe an "--update" option to let it plow over existing files?
+	#commands.add_parser("update", help="Updates current installation with local files.")
+	uninst = commands.add_parser("uninstall")
+	uninst.add_argument("--keep-config", action="store_true")
+	uninst.add_argument("--keep-anims", action="store_true")
+	return parser
+
+
+def install(src, dest, name, dirname=None):
+	print("installing {}...".format(name))
+	dest_path = os.path.abspath(os.path.expanduser(dest))
+	src_path  = os.path.abspath(os.path.expanduser(src ))
+	if (dirname != None):
+		dir_path = os.path.join(dest_path, dirname)
+		ret = shutil.copytree(src_path, dir_path, copy_function=shutil.copy)
+	else:
+		os.makedirs(dest_path, exist_ok=True)
+		ret = shutil.copy(src_path, dest_path)
+	print("\t{} installed to {} successfully!".format(name, ret))
+
+def rm(path, name, dirname=None):
+	print("removing {}...".format(name))
+	full_path = os.path.abspath(os.path.expanduser(path))
+	if (dirname != None):
+		dir_path = os.path.join(full_path, dirname)
+		shutil.rmtree(dir_path)
+	else:
+		os.remove(full_path)
+	print("\tremoved {}.".format(name))
+
+
+parser = parse_args()
+args = parser.parse_args()
+
+# Only disable this if you __really__ know what you're doing.
+if (os.getuid() == 0 or os.geteuid() == 0 or os.getgid() == 0):
+	print("You shouldn't be running this as root.")
+	parser.print_help()
+	sys.exit(-1)
+
+if (args.command == "install"):
+	install("./config",     args.config_prefix, "config files",      "rgbd")
+	install("./daemon",     args.share_prefix,  "daemon files",      "rgbd/daemon")
+	install("./animations", args.share_prefix,  "animation scripts", "rgbd/animations")
+
+	# install lightctl and chmod +x it
+	install("./lightctl", args.bin_dir, "lightctl")
+	lctl = os.path.abspath(os.path.expanduser(os.path.join(args.bin_dir, "lightctl")))
+	st = os.stat(lctl)
+	os.chmod(lctl, st.st_mode | stat.S_IEXEC)
+
+	install("./unitfiles/rgbd.service",   args.unit_file_dir, "rgbd unit files (1/2)")
+	install("./unitfiles/rgbd@.service",  args.unit_file_dir, "rgbd unit files (2/2)")
+	try:
+		install("./unitfiles/dbus.socket",    args.unit_file_dir, "dbus unit files (1/2)")
+		install("./unitfiles/dbus.service",   args.unit_file_dir, "dbus unit files (2/2)")
+	except Exception as e:
+		print("Failed to install dbus unit file(s).")
+		print("This is possibly due to dbus unit file(s) already existing, and can probably be ignored.")
+
+	print("\n\nInstallation complete! You can enable & start rgbd with the following command:")
+	print("\n\tsystemctl --user enable --now rgbd")
+	print("\nIf you want to use an alternate config file, enable rgbd@[config-file-name].service instead.")
+
+elif (args.command == "uninstall"):
+	if (not args.keep_config):
+		rm(args.config_prefix, "config file", "rgbd")
+	if (args.keep_anims):
+		rm(args.share_prefix, "animation scripts", "rgbd/daemon")
+	else:
+		rm(args.share_prefix, "daemon files and animation scripts", "rgbd")
+
+	rm(os.path.join(args.bin_dir, "lightctl"), "lightctl")
+	rm(os.path.join(args.unit_file_dir, "rgbd.service" ), "unit files (1/2)")
+	rm(os.path.join(args.unit_file_dir, "rgbd@.service"), "unit files (2/2)")
+	# we leave dbus services around, since we may not have installed them / other stuff might depend on them.
+	print("Uninstallation finished.")
+else:
+	parser.print_help()
+	sys.exit(1)
+

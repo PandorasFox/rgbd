@@ -15,4 +15,4 @@ New plans:
 
 * More direct control through lightctl (i.e. a zone can be told to be controlled by lightctl, and lightctl can set its colors. Slow, but nice for network-related stuff).
 * Different animations on timers.
-* An install script.
+* A way to just update with the install script.

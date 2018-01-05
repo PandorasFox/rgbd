@@ -9,30 +9,14 @@ class LightCTL:
 		self.parser = argparse.ArgumentParser()
 		commands = self.parser.add_subparsers(dest="command")
 
-		stop_cmd = commands.add_parser("stop")
-		stop_cmd.add_argument("-c", "--config", help="give a new config file for the currently-running daemon to use", default="~/.config/rgbd/config.json")
-
-		start_cmd = commands.add_parser("start")
-		start_cmd.add_argument("-c", "--config", help="give a new config file for the currently-running daemon to use", default="~/.config/rgbd/config.json")
-
-		restart_cmd = commands.add_parser("restart")
-		restart_cmd.add_argument("-c", "--config", help="give a new config file for the currently-running daemon to use", default="~/.config/rgbd/config.json")
-
 		brightness_cmd = commands.add_parser("set-brightness")
 		brightness_cmd.add_argument("brightness_level", type=float, help="set the brightness of the strip to a value from 0 to 255 (Floats between 0 and 1 are also fine)")
-		
 
 	def get_args(self):
 		self.args = self.parser.parse_args()
 		return self.args
 
 	def process_command(self):
-		if (self.args.command in ["start", "stop", "restart"]):
-			cfg_path = os.path.abspath(os.path.expanduser(self.args.config))
-			print("sorry, run the daemon script directly")
-			sys.exit(0)
-		# other commands involve DBUS.... let's init it.
-		
 		import dbus, dbus.exceptions
 		try:
 			bus = dbus.SessionBus()
