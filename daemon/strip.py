@@ -7,23 +7,23 @@ import neopixel
 
 """ default animation that just blanks pixels. Fallback. """
 class BlankAnim:
-	def __init__(self, zone, conf=None):
-		self.zone = zone
-		self.length = zone.length
+	def __init__(self, length, func, custom=None):
+		self.length = length
+		self.setpixel = func
 
 	def iter(self):
 		for i in range(self.length):
-			self.zone.setpixel(i, 0)
+			self.setpixel(i, 0)
 
 """ defines a segment of pixels, from offset to offset+length, for an animation to run on """
 class Zone:
 	def __init__(self, strip, offset, anim_class, zone_conf):
-		self._strip = strip
-		self._offset = offset
+		self.strip = strip
+		self.offset = offset
 		self.conf = zone_conf
 		self.length = self.conf["length"]
 		self.name = self.conf["name"]
-		self._anim = anim_class(self, self.conf.get("animation_config"))
+		self.anim = anim_class(self.length, self.setpixel, self.conf.get("animation_config"))
 		# minimum number of milliseconds to wait before the next iteration
 		# -1 = never redraw (i.e. static lighting)
 		# 0 = redraw as soon as possible
@@ -36,17 +36,16 @@ class Zone:
 	def setpixel(self, i, color):
 		if (i < 0 or i > self.length):
 			raise Exception("Invalid index for setpixel")
-		self._strip.setPixelColor(i + self._offset, color)
+		self.strip.setPixelColor(i + self.offset, color)
 
 	def iter(self):
-		self._anim.iter()
+		self.anim.iter()
 
 class Strip:
-	def __init__(self, config, controller, daemon=True):
+	def __init__(self, config):
 		self.config = config
 		self.strip_conf = config["strip_config"]
 		self.strip  = self.setup_strip()
-		self._controller = controller
 		self.blank = BlankAnim
 		# attempt to insert the animations dir into our path
 		# because I'm not picky, I also try up one level (after the actually given dir)
@@ -146,8 +145,6 @@ class Strip:
 			# TODO: maybe a gradual fade? hnn
 			self.strip.setBrightness(msg["data"]["value"])
 			print("Brightness adjusted to {}".format(msg["data"]["value"]))
-		elif (msg["command"] == "stop"):
-			self._controller.cleanup()
 		else:
 			print("Unknown/invalid message: {}".format(msg))
 

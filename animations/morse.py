@@ -6,11 +6,11 @@ a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9 . ?
 import animations.common as common
 
 class Anim:
-	def __init__(self, zone, config):
-		self.zone = zone
-		self.length = self.zone.length
+	def __init__(self, length, func, config):
+		self.length = length
 		self.conf = config
-		self.color = common.from_hex(self.conf.get("color"))
+		self.setpixel = func
+		self.color = common.from_hex(self.conf.get("color", "#ff00ff"))
 		self.text = self.conf.get("text")
 		self.iters = 0
 		self.blink_pattern = self.to_morse_blinks()
@@ -104,5 +104,5 @@ class Anim:
 		else:
 			col = 0
 		for i in range(self.length):
-			self.zone.setpixel(i, col)
+			self.setpixel(i, col)
 		self.iters = (self.iters + 1) % len(self.blink_pattern)

@@ -20,8 +20,8 @@
 	"animations_path": "~/.local/share/rgbd/animations",
 	"zones": [
 		{
-			"name":		"primaryMon",
-			"length":	240,
+			"name":		"monitor 1",
+			"length":	48,
 			"animation":	"rainbow",
 			"animation_config": {
 				"fade_as_whole": true,
@@ -30,8 +30,8 @@
 			"step_delay":	75
 		},
 		{
-			"name":		"secondaryMon",
-			"length":	0,
+			"name":		"monitor 2",
+			"length":	48,
 			"animation":	"morse",
 			"animation_config": {
 				"color": "#ff3300",
@@ -41,7 +41,22 @@
 		},
 		{
 			"name":		"under desk",
-			"length":	0,
+			"length":	48,
+			"animation":	"blank",
+			"step_delay":	250
+		},
+		{
+			"name":		"behind desk",
+			"length":	48,
+			"animation":	"solid",
+			"animation_config": {
+				"color": "#880088"
+			},
+			"step_delay":	250
+		},
+		{
+			"name":		"under shelf",
+			"length":	48,
 			"animation":	"fade",
 			"animation_config": {
 				"colors": [

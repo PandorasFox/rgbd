@@ -47,7 +47,7 @@ class RGBd:
 		self.listener_thread = multiprocessing.Process(target=dbus_listener.Listener, args=(self.queue,), daemon=True)
 		self.listener_thread.start()
 
-		self.strip = strip.Strip(self.conf, self)
+		self.strip = strip.Strip(self.conf)
 		self.strip.animate(self.queue)
 
 	def reload(self):
@@ -109,13 +109,14 @@ class RGBd:
 		# redirect stdout/stderr
 		sys.stdout.flush()
 		sys.stderr.flush()
+
 		stdin  = open(self.daemon_stdin,  self.daemon_in_md )
 		stdout = open(self.daemon_stdout, self.daemon_out_md)
 		stderr = open(self.daemon_stderr, self.daemon_err_md)
 
-		os.dup2(stdin.fileno(),  sys.stdin.fileno() )
-		os.dup2(stdout.fileno(), sys.stdout.fileno())
-		os.dup2(stderr.fileno(), sys.stderr.fileno())
+		os.dup2(stdin.fileno(),  sys.stdin.fileno() , False)
+		os.dup2(stdout.fileno(), sys.stdout.fileno(), False)
+		os.dup2(stderr.fileno(), sys.stderr.fileno(), False)
 
 		# bind signals
 		signal.signal(signal.SIGINT,  self.cleanup)
