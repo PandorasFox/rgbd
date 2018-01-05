@@ -32,7 +32,7 @@ Currently, the upstream version of `rpi_ws281x` has a bug that prevents using SP
 ```
 git clone https://github.com/pandorasfox/rgbd && cd rgbd
 chmod +x ./installer
-./installer install
+./installer install all
 ```
 
 You can specify a variety of options to the installer for where files get installed to.

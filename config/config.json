@@ -3,7 +3,7 @@
 		"stdout": "/tmp/rgbd.stdout",
 		"stdout_mode": "w",
 		"stderr": "/tmp/rgbd.stderr",
-		"stderr_mode": "w"
+		"stderr_mode": "ab"
 	},
 	"strip_config": {
 		"count":	240,

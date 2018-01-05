@@ -92,7 +92,7 @@ def parse_args():
 	# for individual files
 	parser.add_argument("-b", "--bin-dir",       help="The location to install executable files to.",   default="~/.local/bin/")
 	parser.add_argument("-u", "--unit-file-dir", help="The location to install systemd unit files to.", default="~/.local/share/systemd/user/")
-	parser.add_argument("which", default="all", const="all", nargs="?", choices=["animations", "bin", "config", "daemon", "share", "unit_files", "all"])
+	parser.add_argument("which", choices=["animations", "bin", "config", "daemon", "share", "unit_files", "all"])
 	
 
 	return parser
