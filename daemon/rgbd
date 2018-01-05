@@ -28,7 +28,7 @@ class RGBd:
 		self.daemon_out_md  = d_conf.get("stdout_mode", "a")
 
 		self.daemon_stderr  = d_conf.get("stderr", os.devnull)
-		self.daemon_err_md  = d_conf.get("stderr_mode", "a")
+		self.daemon_err_md  = d_conf.get("stderr_mode", "ab")
 
 		self.daemon_chdir   = d_conf.get("working_dir", "/")
 		self.daemon_pidfile = d_conf.get("pidfile", "/tmp/rgbd.pid")
@@ -112,11 +112,11 @@ class RGBd:
 
 		stdin  = open(self.daemon_stdin,  self.daemon_in_md )
 		stdout = open(self.daemon_stdout, self.daemon_out_md)
-		stderr = open(self.daemon_stderr, self.daemon_err_md)
+		stderr = open(self.daemon_stderr, self.daemon_err_md, 0)
 
-		os.dup2(stdin.fileno(),  sys.stdin.fileno() , False)
-		os.dup2(stdout.fileno(), sys.stdout.fileno(), False)
-		os.dup2(stderr.fileno(), sys.stderr.fileno(), False)
+		os.dup2(stdin.fileno(),  sys.stdin.fileno())
+		os.dup2(stdout.fileno(), sys.stdout.fileno())
+		os.dup2(stderr.fileno(), sys.stderr.fileno())
 
 		# bind signals
 		signal.signal(signal.SIGINT,  self.cleanup)

@@ -60,7 +60,7 @@ class Listener():
 		except KeyboardInterrupt:
 			pass
 		except Exception as e:
-			print("Unexpected exception: {}".format(str(e)))
+			sys.stderr.write("Unexpected exception: {}\n".format(str(e)))
 		finally:
 			print("exiting dbus loop...")
 			self.loop.quit()

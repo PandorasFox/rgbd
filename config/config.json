@@ -27,7 +27,7 @@
 				"fade_as_whole": true,
 				"steps":	1500
 			},
-			"step_delay":	75
+			"step_delay":	100
 		},
 		{
 			"name":		"monitor 2",

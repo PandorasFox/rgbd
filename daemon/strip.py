@@ -91,8 +91,8 @@ class Strip:
 			try:
 				ans = importlib.import_module(name, "animations").Anim
 			except Exception as e:
-				print("Failed to import animation {}: {}".format(name, str(e)))
-				print("\tContinuing with Blank anim for this zone...")
+				sys.stderr.write("Failed to import animation {}: {}\n".format(name, str(e)))
+				sys.stderr.write("\tContinuing with Blank anim for this zone...\n")
 				ans = self.blank
 		return ans
 
@@ -135,9 +135,7 @@ class Strip:
 				try:
 					self.process_msg(queue.get())
 				except Exception as e:
-					# TODO: investigate why the sys.stderr.write fails, but the print() works...
-					sys.stderr.write("unexpected error parsing message: {}".format(str(e)))
-					print("unexpected error parsing message: {}".format(str(e)))
+					sys.stderr.write("unexpected error parsing message: {}\n".format(str(e)))
 	
 	def blank_strip(self):
 		for i in range(self.strip.numPixels()):
