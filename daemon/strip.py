@@ -149,6 +149,8 @@ class Strip:
 			self.strip.setBrightness(msg["data"]["value"])
 			print("Brightness adjusted to {}".format(msg["data"]["value"]))
 		elif (msg["command"] == "setpixel"):
+			# TODO: enforce bounds/pass it to a specified zone, possibly - maybe make a zone register itself?
+			# I can possibly add something like a "zone id" argument, and we just check and make sure that self.zones[id].animation == blank, static, dbus
 			self.strip.setPixelColor(msg["data"]["pos"], msg["data"]["color"])
 			print("Pixel {} set to {}".format(msg["data"]["pos"], hex(msg["data"]["color"])))
 		else:

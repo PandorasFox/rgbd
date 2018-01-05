@@ -42,6 +42,7 @@ class LightCTL:
 			self.dbus.brightness(b)
 			sys.exit(0)
 		
+		# I suggest that this only be done to static or blank zones.
 		if (self.args.command == "set-pixel"):
 			i = self.args.pos
 			col = self.args.color.lstrip("#")
