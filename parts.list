@@ -1,0 +1,22 @@
+Raspberry pi 3 model B:
+https://www.amazon.com/dp/B01N9YSKEU/
+
+WS2812B LEDs:
+https://www.amazon.com/dp/B00JYPJAL2/
+
+Power supply:
+https://www.amazon.com/dp/B01LXN7MN3/
+
+JST-SM 3-pin connectors:
+https://www.amazon.com/dp/B00NBSF724/
+
+
+It also helps to have some single-pin connectors. If you use the 3-pin connectors, cut the cables for the other pins, or you'll probably fry a pi (like I did. Its efforts shall not be forgotten).
+
+I wired DIN (green, middle channel) to GPIO 10 (pin 19) [https://pinout.xyz/pinout/pin19_gpio10#].
+
+I wired my ground to one of the grounds on the pi. It doesn't matter which.
+
+I connected the spliced wires on my strip to the screw connectors on my power supply.
+
+The extra JST-SM connectors are so that you can cut the strip and solder the connectors on (and is the whole point around the "zones" in my code).
