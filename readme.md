@@ -25,7 +25,7 @@ A 3.3V -> 5V voltage step is not required for the WS2812B, since (most) 2812B st
 
 Install [rpi\_ws281x](https://github.com/jgarff/rpi_ws281x) and [colour](https://pypi.python.org/pypi/colour) (not strictly needed, but handy for animations). Make sure to follow the instructions for SPI as given in the `rpi_ws281x` repo.
 
-Currently, the upstream version of `rpi_ws281x` has a bug that prevents using SPI as non-root; I've fixed the bug [here](https://github.com/pandorasfox/rpi_ws281x). Once it gets merged, this will no longer be needed.
+`rpi_ws281x` must be from at least [this commit](https://github.com/jgarff/rpi_ws281x/commit/d50cc444fa3a12bd8e2332ac5d1dd5e61b338e68) or newer, so that rootless SPI works.
 
 ## Installing
 
