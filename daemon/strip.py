@@ -24,6 +24,7 @@ class Zone:
 		self.length = self.conf["length"]
 		self.name = self.conf["name"]
 		self.anim = anim_class(self.length, self.setpixel, self.conf.get("animation_config"))
+		self.allow_dbus = self.conf.get("allow_dbus", False)
 		# minimum number of milliseconds to wait before the next iteration
 		# -1 = never redraw (i.e. static lighting)
 		# 0 = redraw as soon as possible
@@ -34,7 +35,7 @@ class Zone:
 		self.draw = True
 
 	def setpixel(self, i, color):
-		if (i < 0 or i > self.length):
+		if (i < 0 or i > (self.length - 1)):
 			raise Exception("Invalid index for setpixel")
 		self.strip.setPixelColor(i + self.offset, color)
 
@@ -54,7 +55,7 @@ class Strip:
 		self.short_path = "/".join(self.exp_path.split("/")[:-1])
 		sys.path.insert(1, self.short_path)
 		sys.path.insert(1, self.exp_path)
-		
+
 		importlib.invalidate_caches()
 		self.anims_pkg = importlib.import_module("animations")
 		self.zones = []
@@ -136,7 +137,7 @@ class Strip:
 					self.process_msg(queue.get())
 				except Exception as e:
 					sys.stderr.write("unexpected error parsing message: {}\n".format(str(e)))
-	
+
 	def blank_strip(self):
 		for i in range(self.strip.numPixels()):
 			self.strip.setPixelColor(i, 0)
@@ -145,16 +146,22 @@ class Strip:
 	def process_msg(self, msg):
 		# NOTE: maybe break out into a <commands> module, like <animations>?
 		if (msg["command"] == "brightness"):
-			# TODO: maybe a gradual fade? hnn
+			# NOTE: maybe a gradual fade? hnn
 			self.strip.setBrightness(msg["data"]["value"])
 			print("Brightness adjusted to {}".format(msg["data"]["value"]))
 		elif (msg["command"] == "setpixel"):
-			# TODO: enforce bounds/pass it to a specified zone, possibly - maybe make a zone register itself?
-			# I can possibly add something like a "zone id" argument, and we just check and make sure that self.zones[id].animation == blank, static, dbus
-			self.strip.setPixelColor(msg["data"]["pos"], msg["data"]["color"])
-			print("Pixel {} set to {}".format(msg["data"]["pos"], hex(msg["data"]["color"])))
+			z_id = msg["data"]["id"]
+			pos = msg["data"]["pos"]
+			col = msg["data"]["color"]
+			# not gonna bother bounds checking since this is all try/caught
+			z = self.zones[z_id]
+			if (z.allow_dbus):
+				z.setpixel(pos, col)
+				print("Pixel color set.")
+			else:
+				sys.stderr.write("Not allowed to update pixels in this zone over DBUS\n")
 		else:
-			print("Unknown/invalid message: {}".format(msg))
+			sys.stderr.write("Unknown/invalid message: {}\n".format(msg))
 
 	def sleep_til_next(self, time_to_draw):
 		# my machine takes ~9.7ms per draw iteration, which is significant enough that it should be taken into account

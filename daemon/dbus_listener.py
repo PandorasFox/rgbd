@@ -14,14 +14,15 @@ class Handler(dbus.service.Object):
 		print("received command: {}".format(command))
 		self.queue.put({"command": str(command)})
 		return True
-	
+
 	@dbus.service.method("fox.pandora.rgbd.lightctl",
-		in_signature="ii", out_signature="b")
-	def setpixel(self, pos, color):
+		in_signature="iii", out_signature="b")
+	def setpixel(self, zone_id, pos, color):
 		print("received setpixel: {} {}".format(pos, color))
 		self.queue.put({
 			"command": "setpixel",
 			"data": {
+				"id": zone_id,
 				"pos": pos,
 				"color": color
 			}
@@ -46,6 +47,9 @@ class Listener():
 		dbus_loop = dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 		self.loop = gi.repository.GLib.MainLoop()
 
+		# TODO: give this thread the logfile names and log to "{}.{}".format(std[out,err], getpid())
+		# so that we don't clobber the reguar logging
+
 		try:
 			self.bus_name = dbus.service.BusName("fox.pandora.rgbd",
 				bus=dbus.SessionBus(),
@@ -53,7 +57,7 @@ class Listener():
 		except dbus.exceptions.NameExistsException:
 			print("Service is already running")
 			sys.exit(1)
-		
+
 		try:
 			self.handler = Handler(self.queue, self.bus_name)
 			self.loop.run()

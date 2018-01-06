@@ -27,6 +27,7 @@
 				"fade_as_whole": true,
 				"steps":	1500
 			},
+			"allow_dbus":	false,
 			"step_delay":	100
 		},
 		{
@@ -43,6 +44,7 @@
 			"name":		"under desk",
 			"length":	48,
 			"animation":	"blank",
+			"allow_dbus":	true,
 			"step_delay":	250
 		},
 		{
@@ -52,6 +54,7 @@
 			"animation_config": {
 				"color": "#880088"
 			},
+			"allow_dbus":	true,
 			"step_delay":	250
 		},
 		{

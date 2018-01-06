@@ -127,7 +127,6 @@ class RGBd:
 		with open(self.daemon_pidfile, "w") as pidf:
 			pidf.write("{}\n".format(os.getpid()))
 
-		# TODO: set up good logging / verbosity levels
 		print("Daemonization finished at {}".format(datetime.datetime.now()))
 
 	def start(self):
@@ -205,7 +204,7 @@ if (__name__ == "__main__"):
 	if (args.command):
 		cfg_path = os.path.abspath(os.path.expanduser(args.config))
 		daemon = RGBd(cfg_path)
-		
+
 		getattr(daemon, args.command)()
 		sys.exit(0)
 	else:

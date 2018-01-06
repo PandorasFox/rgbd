@@ -13,6 +13,7 @@ class LightCTL:
 		brightness_cmd.add_argument("brightness_level", type=float, help="set the brightness of the strip to a value from 0 to 255 (Floats between 0 and 1 are also fine)")
 		
 		setpixel = commands.add_parser("set-pixel")
+		setpixel.add_argument("zone", type=int, help="zone id to set a pixel in")
 		setpixel.add_argument("pos", type=int, help="offset of the pixel to set")
 		setpixel.add_argument("color", type=str, help="color of the pixel to set")
 
@@ -42,11 +43,11 @@ class LightCTL:
 			self.dbus.brightness(b)
 			sys.exit(0)
 		
-		# I suggest that this only be done to static or blank zones.
 		if (self.args.command == "set-pixel"):
+			z = self.args.zone
 			i = self.args.pos
 			col = self.args.color.lstrip("#")
-			self.dbus.setpixel(i, int(col, 16))
+			self.dbus.setpixel(z, i, int(col, 16))
 			sys.exit(0)
 
 		self.parser.print_help()
