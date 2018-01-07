@@ -1,12 +1,14 @@
 # RGBD
 
+## Version 1.0.0!
+
 I'm writing a daemon for controlling my ws2812B RGB LED strips with my raspberry pi. Security is something of a concern, so this is written so as to never actually require root.
 
 The main purpose behind most of this is so that I can easily dim the brightness on the lights (or change the lighting patterns/mood) from my phone, in my bed. Really.
 
 Uses [rpi\_ws281x](https://github.com/jgarff/rpi_ws281x) and [colour](https://pypi.python.org/pypi/colour).
 
-You *must* be controlling your pi over SPI for this, so it can run as a non-root user. Specifically, you'll probably need to modify your `/boot/config.txt` as outlined in `rpi\_ws281x`'s readme.
+You *must* be controlling your pi over SPI for this, so it can run as a non-root user. Specifically, you'll probably need to modify your `/boot/config.txt` and `/boot/cmdline.txt` as outlined in `rpi_ws281x`'s readme.
 
 DBUS is used for passing messages from the ctl script to the daemon. If you don't have a dbus session bus (i.e. from an X session), I've included some systemd unit files.
 
@@ -44,6 +46,8 @@ You must be a member of the `gpio` group in order to run this code.
 ## Usage
 
 After installing the files, you should be able to just `systemctl --user enable --now rgbd`. You may need to tweak your config file.
+
+See the included animation scripts for examples on how to create animations.
 
 ## This project and root/sudo
 

@@ -157,6 +157,7 @@ class Strip:
 			z = self.zones[z_id]
 			if (z.allow_dbus):
 				z.setpixel(pos, col)
+				# self.strip.show()				
 				print("Pixel color set.")
 			else:
 				sys.stderr.write("Not allowed to update pixels in this zone over DBUS\n")

@@ -6,7 +6,7 @@
 		"stderr_mode": "ab"
 	},
 	"strip_config": {
-		"count":	240,
+		"count":	421,
 		"pin":		10,
 		"freq":		800000,
 		"DMA":		10,
@@ -21,7 +21,7 @@
 	"zones": [
 		{
 			"name":		"blank",
-			"length":	240,
+			"length":	421,
 			"animation":	"blank",
 			"step_delay":	-1
 		}

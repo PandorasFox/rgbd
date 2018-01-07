@@ -6,7 +6,7 @@
 		"stderr_mode": "ab"
 	},
 	"strip_config": {
-		"count":	240,
+		"count":	421,
 		"pin":		10,
 		"freq":		800000,
 		"DMA":		10,
@@ -21,18 +21,18 @@
 	"zones": [
 		{
 			"name":		"monitor 1",
-			"length":	48,
+			"length":	421,
 			"animation":	"rainbow",
 			"animation_config": {
 				"fade_as_whole": true,
-				"steps":	1500
+				"steps":	150
 			},
 			"allow_dbus":	false,
-			"step_delay":	100
+			"step_delay":	10
 		},
 		{
 			"name":		"monitor 2",
-			"length":	48,
+			"length":	0,
 			"animation":	"morse",
 			"animation_config": {
 				"color": "#ff3300",
@@ -42,14 +42,14 @@
 		},
 		{
 			"name":		"under desk",
-			"length":	48,
+			"length":	0,
 			"animation":	"blank",
 			"allow_dbus":	true,
 			"step_delay":	250
 		},
 		{
 			"name":		"behind desk",
-			"length":	48,
+			"length":	0,
 			"animation":	"solid",
 			"animation_config": {
 				"color": "#880088"
@@ -59,7 +59,7 @@
 		},
 		{
 			"name":		"under shelf",
-			"length":	48,
+			"length":	0,
 			"animation":	"fade",
 			"animation_config": {
 				"colors": [
