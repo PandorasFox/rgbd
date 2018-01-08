@@ -134,7 +134,9 @@ class Strip:
 			first = False
 			while (not queue.empty()):
 				try:
-					self.process_msg(queue.get())
+					ret = self.process_msg(queue.get())
+					if (ret != 0):
+						return ret
 				except Exception as e:
 					sys.stderr.write("unexpected error parsing message: {}\n".format(str(e)))
 
@@ -144,11 +146,11 @@ class Strip:
 		self.strip.show()
 
 	def process_msg(self, msg):
-		# NOTE: maybe break out into a <commands> module, like <animations>?
 		if (msg["command"] == "brightness"):
 			# NOTE: maybe a gradual fade? hnn
 			self.strip.setBrightness(msg["data"]["value"])
 			print("Brightness adjusted to {}".format(msg["data"]["value"]))
+			return 0
 		elif (msg["command"] == "setpixel"):
 			z_id = msg["data"]["id"]
 			pos = msg["data"]["pos"]
@@ -161,11 +163,15 @@ class Strip:
 				print("Pixel color set.")
 			else:
 				sys.stderr.write("Not allowed to update pixels in this zone over DBUS\n")
+			return 0
+		elif (msg["command"] == "loadconf"):
+			return msg["data"]["path"]
 		else:
 			sys.stderr.write("Unknown/invalid message: {}\n".format(msg))
+			return 0
 
 	def sleep_til_next(self, time_to_draw):
-		# my machine takes ~9.7ms per draw iteration, which is significant enough that it should be taken into account
+		# my machine takes 7ms/100 pixels, which is significant enough to take into account
 		# this func is insignificant enough to ignore (also, it'd be a pain to take care of properly)
 		# 3 cases:
 		# delay_time == -1 : do nothing (drawn once, then z.draw => false

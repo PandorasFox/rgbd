@@ -17,6 +17,10 @@ class LightCTL:
 		setpixel.add_argument("pos", type=int, help="offset of the pixel to set")
 		setpixel.add_argument("color", type=str, help="color of the pixel to set")
 
+		loadconf = commands.add_parser("load-conf")
+		loadconf.add_argument("path", help="Path of the conf file to hotload")
+		
+		reloadconf = commands.add_parser("reload-conf")
 
 	def get_args(self):
 		self.args = self.parser.parse_args()
@@ -50,6 +54,15 @@ class LightCTL:
 			self.dbus.setpixel(z, i, int(col, 16))
 			sys.exit(0)
 
+		if (self.args.command == "load-conf"):
+			self.dbus.loadconf(self.args.path)
+			sys.exit(0)
+
+		if (self.args.command == "reload-conf"):
+			self.dbus.loadconf("")
+			sys.exit(0)
+
+		print(self.args)
 		self.parser.print_help()
 		sys.exit(1)
 

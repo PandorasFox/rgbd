@@ -24,7 +24,7 @@
 			"length":	421,
 			"animation":	"rainbow",
 			"animation_config": {
-				"fade_as_whole": true,
+				"fade_as_whole": false,
 				"steps":	150
 			},
 			"allow_dbus":	false,

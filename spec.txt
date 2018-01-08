@@ -13,5 +13,5 @@ Everything is working.
 
 New plans:
 
-* More direct control through lightctl (i.e. a zone can be told to be controlled by lightctl, and lightctl can set its colors. Slow, but nice for network-related stuff).
 * Different animations on timers.
+* zsh/bash completions for ./installer, lightctl

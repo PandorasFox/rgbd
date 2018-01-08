@@ -30,6 +30,18 @@ class Handler(dbus.service.Object):
 		return True
 
 	@dbus.service.method("fox.pandora.rgbd.lightctl",
+		in_signature="s", out_signature="b")
+	def loadconf(self, confpath):
+		print("received conf reload: {}".format(confpath))
+		self.queue.put({
+			"command": "loadconf",
+			"data": {
+				"path": confpath
+			}
+		})
+		return True
+
+	@dbus.service.method("fox.pandora.rgbd.lightctl",
 		in_signature="y", out_signature="b")
 	def brightness(self, input_brightness):
 		print("received brightness adjustment: {}".format(input_brightness))

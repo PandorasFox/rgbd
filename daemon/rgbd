@@ -13,7 +13,8 @@ import strip
 
 class RGBd:
 	def __init__(self, confpath):
-		self.conf = self.loadconf(confpath)
+		self.confp = confpath
+		self.conf = self.loadconf()
 		self.blank_on_exit = self.conf.get("blank_on_exit", False)
 
 		self.do_daemonize = self.conf.get("daemonize", True)
@@ -33,8 +34,8 @@ class RGBd:
 		self.daemon_chdir   = d_conf.get("working_dir", "/")
 		self.daemon_pidfile = d_conf.get("pidfile", "/tmp/rgbd.pid")
 
-	def loadconf(self, path):
-		with open(path) as conf:
+	def loadconf(self):
+		with open(self.confp) as conf:
 			return json.load(conf)
 
 	def run(self):
@@ -46,13 +47,21 @@ class RGBd:
 		self.queue = multiprocessing.Queue()
 		self.listener_thread = multiprocessing.Process(target=dbus_listener.Listener, args=(self.queue,), daemon=True)
 		self.listener_thread.start()
-
-		self.strip = strip.Strip(self.conf)
-		self.strip.animate(self.queue)
+		
+		while True:
+			self.strip = strip.Strip(self.conf)
+			ret = self.strip.animate(self.queue)
+			if (ret != ""):
+				self.confp = ret
+			self.conf = self.loadconf()
 
 	def reload(self):
-		# ideally this should reload configs in-place
-		self.restart()
+		self.queue.put({
+			"command": "loadconf",
+			"data": {
+				"path": self.confp
+			}
+		})
 
 	def cleanup(self, signum=None, frame=None):
 		if (self.blank_on_exit):
