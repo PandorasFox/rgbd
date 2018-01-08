@@ -15,11 +15,7 @@ class RGBd:
 	def __init__(self, confpath):
 		self.confp = confpath
 		self.conf = self.loadconf()
-		self.blank_on_exit = self.conf.get("blank_on_exit", False)
 
-		self.do_daemonize = self.conf.get("daemonize", True)
-		if (self.do_daemonize == False):
-			return
 		d_conf = self.conf.get("daemon", {})
 		# we never use STDIN ever again anyways... but this is tradition.
 		self.daemon_stdin   = d_conf.get("stdin",  os.devnull)
@@ -33,6 +29,7 @@ class RGBd:
 
 		self.daemon_chdir   = d_conf.get("working_dir", "/")
 		self.daemon_pidfile = d_conf.get("pidfile", "/tmp/rgbd.pid")
+		self.blank_on_exit  = d_conf.get("blank_on_exit", False)
 
 	def loadconf(self):
 		with open(self.confp) as conf:
@@ -65,6 +62,7 @@ class RGBd:
 
 	def cleanup(self, signum=None, frame=None):
 		if (self.blank_on_exit):
+			print("blanking...")
 			self.strip.blank_strip()
 		os.kill(self.listener_thread.pid, signal.SIGINT)
 		self.listener_thread.join(timeout=0.25)
@@ -91,9 +89,6 @@ class RGBd:
 	"""
 
 	def daemonize(self):
-		# useful for debugging animations, for now.
-		if (not self.do_daemonize):
-			return
 		# first of the double fork
 		try:
 			pid = os.fork()
