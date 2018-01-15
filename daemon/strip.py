@@ -114,7 +114,7 @@ class Strip:
 		remaining = self.strip_conf.get("count") - offset
 		if (remaining > 0):
 			print("{} pixels not part of a zone; creating a blank zone to cover them".format(remaining))
-			zones.append(Zone(self.strip, offset, self.blank, {
+			self.zones.append(Zone(self.strip, offset, self.blank, {
 				"name": "dummy",
 				"length": remaining,
 				"step_delay": -1

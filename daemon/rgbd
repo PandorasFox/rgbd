@@ -61,7 +61,7 @@ class RGBd:
 		})
 
 	def cleanup(self, signum=None, frame=None):
-		if (self.blank_on_exit):
+		if (self.blank_on_exit and self.strip):
 			print("blanking...")
 			self.strip.blank_strip()
 		os.kill(self.listener_thread.pid, signal.SIGINT)
