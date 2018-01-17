@@ -165,6 +165,7 @@ class RGBd:
 			sys.stderr.write("No pid found when stopping - daemon not running?\n")
 			return
 		# try to kill existing process / wipe out lockfile
+		isalive = True
 		try:
 			os.kill(pid, signal.SIGTERM)
 			time.sleep(0.3)
