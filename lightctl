@@ -13,7 +13,7 @@ class LightCTL:
 		brightness_cmd.add_argument("brightness_level", type=float, help="set the brightness of the strip to a value from 0 to 255 (Floats between 0 and 1 are also fine)")
 		
 		setpixel = commands.add_parser("set-pixel")
-		setpixel.add_argument("zone", type=int, help="zone id to set a pixel in")
+		setpixel.add_argument("zone", type=str, help="name of the zone to set pixel in")
 		setpixel.add_argument("pos", type=int, help="offset of the pixel to set")
 		setpixel.add_argument("color", type=str, help="color of the pixel to set")
 
@@ -21,6 +21,10 @@ class LightCTL:
 		loadconf.add_argument("path", help="Path of the conf file to hotload")
 		
 		reloadconf = commands.add_parser("reload-conf")
+
+		deliver = commands.add_parser("deliver")
+		deliver.add_argument("zone", type=str, help="Name of the zone to pass status info to")
+		deliver.add_argument("data", type=str, help="Arbitrary data to deliver to a zone")
 
 	def get_args(self):
 		self.args = self.parser.parse_args()
@@ -60,6 +64,10 @@ class LightCTL:
 
 		if (self.args.command == "reload-conf"):
 			self.dbus.loadconf("")
+			sys.exit(0)
+
+		if (self.args.command == "deliver"):
+			self.dbus.deliver(self.args.zone, self.args.data)
 			sys.exit(0)
 
 		print(self.args)

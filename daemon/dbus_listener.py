@@ -9,22 +9,28 @@ class Handler(dbus.service.Object):
 		self.queue = queue
 
 	@dbus.service.method("fox.pandora.rgbd.lightctl",
-		in_signature="s", out_signature="b")
-	def command(self, command):
-		print("received command: {}".format(command))
-		self.queue.put({"command": str(command)})
+			in_signature="ss", out_signature="b")
+	def deliver(self, zone_name, message):
+		print("received deliver command: {} => {}".format(message, zone_name))
+		self.queue.put({
+			"command": "deliver",
+			"data": {
+				"name": str(zone_name),
+				"info": str(message)
+			}
+		})
 		return True
 
 	@dbus.service.method("fox.pandora.rgbd.lightctl",
-		in_signature="iii", out_signature="b")
-	def setpixel(self, zone_id, pos, color):
+		in_signature="sii", out_signature="b")
+	def setpixel(self, zone_name, pos, color):
 		print("received setpixel: {} {}".format(pos, color))
 		self.queue.put({
 			"command": "setpixel",
 			"data": {
-				"id": zone_id,
-				"pos": pos,
-				"color": color
+				"name": str(zone_name),
+				"pos": int(pos),
+				"color": int(color)
 			}
 		})
 		return True
@@ -36,7 +42,7 @@ class Handler(dbus.service.Object):
 		self.queue.put({
 			"command": "loadconf",
 			"data": {
-				"path": confpath
+				"path": str(confpath)
 			}
 		})
 		return True
@@ -48,7 +54,7 @@ class Handler(dbus.service.Object):
 		self.queue.put({
 			"command": "brightness",
 			"data": {
-				"value": input_brightness
+				"value": int(input_brightness)
 			}
 		})
 		return True

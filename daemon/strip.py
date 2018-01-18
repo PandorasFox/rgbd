@@ -2,7 +2,7 @@ import importlib
 import os
 import sys
 import time
-# must have install rpi_ws281x
+# must have installed rpi_ws281x
 import neopixel
 
 """ default animation that just blanks pixels. Fallback. """
@@ -41,6 +41,10 @@ class Zone:
 
 	def iter(self):
 		self.anim.iter()
+
+	def deliver(self, msg):
+		if (hasattr(self.anim, "deliver")):
+			self.anim.deliver(msg)
 
 class Strip:
 	def __init__(self, config):
@@ -97,7 +101,6 @@ class Strip:
 				ans = self.blank
 		return ans
 
-
 	def setup_zones(self):
 		offset = 0
 		for z in self.config.get("zones"):
@@ -135,7 +138,7 @@ class Strip:
 			while (not queue.empty()):
 				try:
 					ret = self.process_msg(queue.get())
-					if (ret != 0):
+					if (ret != None):
 						return ret
 				except Exception as e:
 					sys.stderr.write("unexpected error parsing message: {}\n".format(str(e)))
@@ -146,29 +149,32 @@ class Strip:
 		self.strip.show()
 
 	def process_msg(self, msg):
+		print("processing command: {}".format(msg))
 		if (msg["command"] == "brightness"):
 			# NOTE: maybe a gradual fade? hnn
 			self.strip.setBrightness(msg["data"]["value"])
 			print("Brightness adjusted to {}".format(msg["data"]["value"]))
-			return 0
 		elif (msg["command"] == "setpixel"):
-			z_id = msg["data"]["id"]
+			name = msg["data"]["name"]
 			pos = msg["data"]["pos"]
 			col = msg["data"]["color"]
 			# not gonna bother bounds checking since this is all try/caught
-			z = self.zones[z_id]
-			if (z.allow_dbus):
-				z.setpixel(pos, col)
-				# self.strip.show()				
-				print("Pixel color set.")
-			else:
-				sys.stderr.write("Not allowed to update pixels in this zone over DBUS\n")
-			return 0
+			for z in self.zones:
+				if (z.name == name and z.allow_dbus):
+					z.setpixel(pos, col)
+					self.strip.show()
+					print("Pixel color set.")
+				elif (z.name == name):
+					sys.stderr.write("Not allowed to update pixels in this zone over DBUS\n")
 		elif (msg["command"] == "loadconf"):
 			return msg["data"]["path"]
+		elif (msg["command"] == "deliver"):
+			zone_name = msg["data"]["name"]
+			for z in self.zones:
+				if (z.name == zone_name and z.allow_dbus):
+					z.deliver(msg["data"]["info"])
 		else:
 			sys.stderr.write("Unknown/invalid message: {}\n".format(msg))
-			return 0
 
 	def sleep_til_next(self, time_to_draw):
 		# my machine takes 7ms/100 pixels, which is significant enough to take into account
