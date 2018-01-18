@@ -10,7 +10,7 @@ class Anim:
 		self.length = length
 		self.setpixel = func
 		self.conf = config
-		self.whole = self.conf.get("fade_as_whole", True)
+		self.whole = self.conf.get("strip_as_whole", True)
 		self.steps = self.conf.get("steps", self.length)
 		self.gen_wheel(self.steps)
 		self.max_iters = self.length * self.steps // fractions.gcd(self.length, self.steps)
